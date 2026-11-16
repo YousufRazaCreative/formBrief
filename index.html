@@ -1,0 +1,780 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex,nofollow"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Design Project Details and Confirmation</title></head><body>
+
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one calm column. Brief = 4 steps with a required-only progress strip. Setup and Confirmation reuse the same parts. */
+:root{--font:"Inter",Arial,Helvetica,"Liberation Sans",sans-serif;--bg:#0E0E0E;--card:#1A1A1A;--ink:#F4F2EC;--dark:#E6E3DA;--body:#B9B6AD;--help:#A09D94;--ph:#8A877F;--line:#34332F;--panel:#242321;--acc:#FF6A1A;--acct:#FF8A4C;--rec:#FF8A4C;--acc-ink:#111111;--acc-tint:rgba(255,106,26,.16);--field:#121212;--ok:#6FCB93;--err:#FF8E7A;--grad:var(--acc);--glow:none;color-scheme:dark}
+:root[data-theme="ember"]{--bg:#0E0E0E;--card:#1A1A1A;--ink:#F4F2EC;--dark:#E6E3DA;--body:#B9B6AD;--help:#A09D94;--ph:#8A877F;--line:#34332F;--panel:#242321;--acc:#FF6A1A;--acct:#FF8A4C;--rec:#FF8A4C;--acc-ink:#111111;--acc-tint:rgba(255,106,26,.16);--field:#121212;--ok:#6FCB93;--err:#FF8E7A;--grad:var(--acc);--glow:none;color-scheme:dark}
+:root[data-theme="paper"]{--bg:#E9E4D8;--card:#F6F2E9;--ink:#2A2824;--dark:#3A372F;--body:#5A574E;--help:#625F55;--ph:#6F6B60;--line:#D2CBBB;--panel:#E6E0D2;--acc:#F0580F;--acct:#B93C0A;--rec:#B03709;--acc-ink:#1E1C18;--acc-tint:rgba(240,88,15,.13);--field:#FCFAF5;--ok:#2B7048;--err:#A92E1C;--grad:var(--acc);--glow:none;color-scheme:light}
+:root[data-theme="neon"]{--bg:#0A0912;--card:#15131F;--ink:#F5F2FF;--dark:#E6E1F5;--body:#BDB7D1;--help:#A49DBA;--ph:#8C86A3;--line:#352F4B;--panel:#1F1B2E;--acc:#D45CFF;--acct:#E58BFF;--rec:#E58BFF;--acc-ink:#0A0912;--acc-tint:rgba(212,92,255,.16);--field:#100E19;--ok:#6FCB93;--err:#FF8E9B;--grad:linear-gradient(135deg,#FF4FA3,#8B5CF6);--glow:0 0 18px rgba(212,92,255,.38);color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--card);z-index:30}
+.wrap{max-width:760px;margin:0 auto}
+button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:4px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+[hidden]{display:none!important}
+
+/* top bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--card);border-bottom:1px solid var(--line);margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px))}
+.bar-in{max-width:760px;margin:0 auto}
+.bar-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:8px}
+.brand{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--dark);display:flex;align-items:center;gap:8px;text-transform:uppercase}
+.brand i{display:block;width:16px;height:2px;background:var(--grad)}
+.stepnow{font-size:12.5px;color:var(--body);text-align:right}
+.stepnow b{color:var(--ink)}
+.saved{font-size:11.5px;color:var(--help);margin-left:10px;transition:opacity .4s;opacity:0}
+.saved.on{opacity:1}
+.segs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.seg{border:0;background:none;padding:0;text-align:left;display:block;min-height:24px}
+.seg .t{height:4px;background:var(--line);border-radius:2px;overflow:hidden;position:relative}
+.seg .t b{position:absolute;inset:0 auto 0 0;width:var(--f,0%);background:var(--grad);border-radius:2px;transition:width .35s ease}
+.seg .l{display:flex;align-items:center;gap:5px;font-size:11px;letter-spacing:.04em;color:var(--help);margin-top:6px;white-space:nowrap;overflow:hidden}
+.seg .l em{font-style:normal;font-weight:700}
+.seg .l svg{width:11px;height:11px;flex:none;display:none;stroke:var(--acc);fill:none;stroke-width:2.6}
+.seg.done .l svg{display:block}
+.seg.cur .l{color:var(--ink);font-weight:700}
+.seg:hover .l{color:var(--ink)}
+.seg .opt{font-size:9.5px;border:1px solid var(--line);border-radius:999px;padding:0 5px;color:var(--help);letter-spacing:.04em}
+@media(max-width:620px){.seg .l span.nm{display:none}.stepnow .nm{display:none}}
+.pvbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:7px max(16px,env(safe-area-inset-left,0px));background:var(--acc-tint);font-size:12px}
+.pvbar b{margin-right:4px}
+.pvbar button{border:1px solid var(--line);background:var(--field);border-radius:999px;padding:3px 11px;font-size:12px}
+.pvbar button[aria-pressed=true]{background:var(--grad);color:var(--acc-ink);border-color:var(--acct)}
+
+/* hero */
+.hero{padding:52px 0 36px}
+.eyebrow{display:flex;align-items:center;gap:10px;font-size:11.5px;font-weight:700;letter-spacing:.16em;color:var(--dark);text-transform:uppercase}
+.eyebrow i{width:36px;height:3px;background:var(--grad);display:block}
+h1{font-size:clamp(32px,7vw,54px);line-height:1.04;letter-spacing:-.015em;margin:16px 0 18px;font-weight:700;text-wrap:balance;text-transform:uppercase}
+.warm{font-size:18px;line-height:1.5;color:var(--dark);max-width:34em;margin:0 0 20px}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.badge{font-size:12.5px;border:1px solid var(--line);padding:5px 11px;border-radius:999px;color:var(--body)}
+.by{font-size:13px;color:var(--help);margin-top:18px}
+.by b{color:var(--dark)}
+.btn{background:var(--grad);color:var(--acc-ink);border:0;border-radius:6px;padding:0 22px;min-height:46px;font-weight:700;font-size:15px;display:inline-flex;align-items:center;justify-content:center;gap:10px;transition:transform .12s,opacity .2s}
+.btn:hover{opacity:.92}.btn:active{transform:scale(.98)}
+.btn[disabled]{opacity:.55;cursor:progress}
+.btn.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
+.btn .sp{width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite;display:none}
+.btn[disabled] .sp{display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.welcome{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;border:1px solid var(--line);background:var(--card);border-radius:8px;padding:10px 14px;margin:0 0 20px;font-size:13.5px;color:var(--dark)}
+.linkbtn{background:none;border:0;color:var(--acct);text-decoration:underline;padding:0;font-size:13.5px}
+.warn{border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:10px 14px;margin:0 0 20px;font-size:13.5px;color:var(--dark)}
+
+/* sections */
+section.sec{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px 22px 24px;margin:0 0 16px;scroll-margin-top:112px}
+@media(max-width:620px){section.sec{padding:22px 16px 20px}}
+h2:focus{outline:none}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:6px;flex-wrap:wrap}
+.sh .n{width:34px;height:34px;border-radius:50%;background:var(--grad);color:var(--acc-ink);display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex:none}
+.sh h2{font-size:22px;margin:0;letter-spacing:-.005em;font-weight:700}
+.sh .tag{font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--help);border:1px solid var(--line);border-radius:999px;padding:1px 8px}
+.sub{color:var(--body);margin:0 0 24px;font-size:14.5px}
+.q{margin:0 0 24px}
+.lab{display:block;font-size:16px;font-weight:600;color:var(--ink);margin:0 0 9px}
+.lab .rq{color:var(--acct)}
+.lab .ot{font-size:11px;font-weight:500;color:var(--help);border:1px solid var(--line);border-radius:999px;padding:0 7px;margin-left:8px;vertical-align:2px}
+.lab+.hint{margin-top:-6px}
+.hint{font-size:13.5px;color:var(--help);margin:0 0 10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 20px}
+@media(max-width:620px){.grid2{grid-template-columns:1fr}}
+input[type=text],input[type=email],input[type=tel],input[type=date],input[type=url],textarea,select{width:100%;background:var(--field);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:11px 12px;font:inherit;font-size:15px;min-height:46px;transition:border-color .15s,box-shadow .15s}
+select{appearance:auto}
+textarea{resize:vertical;min-height:78px;line-height:1.45}
+input::placeholder,textarea::placeholder{color:var(--ph);opacity:1}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--acct);box-shadow:0 0 0 3px var(--acc-tint)}
+.q.bad input,.q.bad textarea{border-color:var(--err)}
+.err{display:none;font-size:13px;color:var(--err);margin-top:6px;font-weight:600;gap:6px;align-items:flex-start}
+.err svg{width:15px;height:15px;flex:none;margin-top:2px;stroke:var(--err);fill:none;stroke-width:2.2}
+.q.bad .err{display:flex}
+.note{font-size:12.5px;color:var(--err);margin-top:6px}
+
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:8px;background:var(--field);border:1px solid var(--line);border-radius:8px;padding:10px 14px;min-height:44px;color:var(--dark);transition:border-color .15s,background .15s,transform .1s}
+.chip:hover{border-color:var(--help)}
+.chip:active{transform:scale(.98)}
+.chip svg.ck{width:14px;height:14px;stroke:var(--acc);fill:none;stroke-width:2.6;display:none;flex:none}
+.chip[aria-checked=true]{border-color:var(--acct);background:var(--acc-tint);color:var(--ink);font-weight:600}
+.chip[aria-checked=true] svg.ck{display:block}
+.chip.soft{border-style:dashed;color:var(--body)}
+.other{margin-top:10px;max-width:420px}
+.togglebox{margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+
+/* cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(124px,1fr));gap:10px}
+.card{position:relative;background:var(--field);border:1px solid var(--line);border-radius:10px;transition:border-color .15s,background .15s}
+.card:hover{border-color:var(--help)}
+.card .cb{width:100%;background:none;border:0;padding:16px 12px 12px;display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--dark);font-size:14px;text-align:center;min-height:98px;border-radius:10px}
+.card .cb svg{width:30px;height:30px;stroke:var(--help);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;transition:stroke .15s}
+.card[data-on=true]{border-color:var(--acct);background:var(--acc-tint)}
+.card[data-on=true] .cb svg{stroke:var(--acc)}
+.card[data-on=true] .cb{color:var(--ink);font-weight:600}
+.card .tick{position:absolute;top:8px;right:8px;width:18px;height:18px;border-radius:50%;background:var(--grad);display:none;align-items:center;justify-content:center}
+.card[data-on=true] .tick{display:flex}
+.card .tick svg{width:11px;height:11px;stroke:var(--acc-ink);fill:none;stroke-width:3}
+.qty{display:none;align-items:center;justify-content:center;gap:12px;padding:0 0 12px;font-size:13px;color:var(--body)}
+.card[data-on=true] .qty{display:flex}
+.qty button{width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:var(--field);line-height:1;font-size:17px;padding:0}
+.qty b{min-width:18px;text-align:center;color:var(--ink)}
+.chosen{margin-top:12px;font-size:13.5px;color:var(--dark);background:var(--panel);border-radius:8px;padding:8px 12px}
+
+/* sliders */
+.sl{display:grid;grid-template-columns:1fr auto 1fr;gap:6px 14px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.sl:first-of-type{border-top:1px solid var(--line)}
+.sl .l,.sl .r{font-size:14.5px;color:var(--body);font-weight:600}
+.sl .r{text-align:right}
+.sl .l.on,.sl .r.on{color:var(--acct)}
+.dots{display:flex;gap:6px;align-items:center}
+.dot{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--line);background:var(--field);padding:0;display:flex;align-items:center;justify-content:center;transition:border-color .15s,background .15s}
+.dot:hover{border-color:var(--help)}
+.dot i{width:11px;height:11px;border-radius:50%;background:var(--grad);transform:scale(0);transition:transform .15s}
+.dot.on{border-color:var(--acct)}
+.dot.on i{transform:scale(1)}
+.sl .h{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:12.5px;color:var(--help)}
+.sl .h span:nth-child(2){text-align:right}
+.sl .sk{background:none;border:0;color:var(--help);text-decoration:underline;font-size:12px;padding:2px 0}
+@media(max-width:620px){
+  .sl{grid-template-columns:1fr 1fr}
+  .sl .dots{grid-column:1/-1;order:3;justify-content:space-between}
+  .dot{width:42px;height:42px}
+  .sl .h{order:4}
+}
+
+/* swatches */
+.sw{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.swb{background:var(--field);border:1px solid var(--line);border-radius:10px;padding:8px;text-align:left;transition:border-color .15s,background .15s;display:flex;flex-direction:column;gap:8px;min-height:44px}
+.swb .st{display:flex;height:34px;border-radius:6px;overflow:hidden}
+.swb .st span{flex:1}
+.swb .tx{font-size:13.5px;color:var(--dark);display:flex;justify-content:space-between;align-items:center;padding:0 2px}
+.swb[aria-checked=true]{border-color:var(--acct);background:var(--acc-tint)}
+.swb[aria-checked=true] .tx{font-weight:600;color:var(--ink)}
+
+.timing{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
+.timing .dt{width:200px}
+.links .row{display:flex;gap:8px;margin-bottom:8px}
+.links .row button{flex:none;width:44px;border:1px solid var(--line);background:var(--field);border-radius:6px}
+
+.lab .rc{font-size:11px;font-weight:600;color:var(--rec);margin-left:8px;vertical-align:2px;letter-spacing:.02em}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:26px;padding-top:18px;border-top:1px solid var(--line);flex-wrap:wrap}
+.stepok{font-size:13px;color:var(--ok);display:flex;align-items:center;gap:6px;font-weight:600}
+.stepok svg{width:14px;height:14px;stroke:var(--ok);fill:none;stroke-width:2.6}
+.errsum.soft{border-color:var(--line);background:var(--panel)}.errsum.soft a{color:var(--rec)}
+.btn{box-shadow:var(--glow)}
+.chip[aria-checked=true],.card[data-on=true],.swb[aria-checked=true]{box-shadow:var(--glow)}
+.themes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 24px;max-width:520px}
+.th{border:1.5px solid var(--line);border-radius:12px;background:var(--card);padding:9px;text-align:left;display:flex;flex-direction:column;gap:7px;min-height:44px;transition:border-color .2s,transform .12s}
+.th:active{transform:scale(.98)}
+.th .pv{height:42px;border-radius:7px;display:flex;align-items:flex-end;justify-content:flex-start;padding:6px;gap:4px;border:1px solid rgba(128,128,128,.25)}
+.th .pv i{display:block;height:8px;border-radius:4px}
+.th b{font-size:13px;color:var(--ink)}
+.th small{font-size:11.5px;color:var(--help);line-height:1.3}
+.th[aria-checked=true]{border-color:var(--acc);box-shadow:var(--glow)}
+.th[aria-checked=true] b::after{content:" \2713";color:var(--acct)}
+.foot .ft{display:flex;gap:12px}.foot .ft button{background:none;border:0;padding:0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--help);text-decoration:underline}
+.foot .ft button[aria-pressed=true]{color:var(--ink);font-weight:700}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes slidein{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+@keyframes draw{from{stroke-dashoffset:24}to{stroke-dashoffset:0}}
+.hero>*{animation:rise .5s ease both}.hero>*:nth-child(2){animation-delay:.05s}.hero>*:nth-child(3){animation-delay:.1s}.hero>*:nth-child(4){animation-delay:.15s}.hero>*:nth-child(5){animation-delay:.2s}.hero>*:nth-child(6){animation-delay:.25s}
+.enter{animation:slidein .3s ease both}
+.stepok svg path,.seg.done .l svg path{stroke-dasharray:24;animation:draw .35s ease both}
+.bigtick{width:56px;height:56px;stroke:var(--acc);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;margin-bottom:10px}
+.bigtick path{stroke-dasharray:24;animation:draw .5s .15s ease both}
+/* confirmation / setup */
+.pd{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--field)}
+.pd .hd{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--panel);padding:10px 16px;font-size:12px;letter-spacing:.06em;font-weight:700;color:var(--dark)}
+.pdr{display:grid;grid-template-columns:160px 1fr;gap:6px 16px;padding:13px 16px;border-top:1px solid var(--line);font-size:14.5px}
+.pdr dt{color:var(--help);font-size:12.5px;font-weight:600;padding-top:2px}
+.pdr dd{margin:0;color:var(--ink);white-space:pre-wrap}
+@media(max-width:620px){.pdr{grid-template-columns:1fr}}
+.dlh,.dlr{display:grid;grid-template-columns:2fr .6fr 1.6fr 1.4fr;gap:6px 12px;font-size:14px;padding:7px 0;border-bottom:1px solid var(--line)}
+.dlh{font-size:11.5px;font-weight:600;color:var(--help);letter-spacing:.04em}
+.dlr span::before{content:attr(data-l);display:none;font-size:11.5px;color:var(--help);font-weight:600;margin-right:6px}
+@media(max-width:620px){.dlh{display:none}.dlr{grid-template-columns:1fr 1fr;padding:10px 0}.dlr span:first-child{grid-column:1/-1;font-weight:600}.dlr span::before{display:inline}}
+.tg{margin:30px 0 0}
+.tg h3{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;margin:0 0 10px;color:var(--dark)}
+.terms{margin:0;padding:0;list-style:none;display:grid;gap:12px}
+.terms li{display:grid;grid-template-columns:30px 1fr;gap:6px;font-size:14.5px;color:var(--body)}
+.terms li b.nn{color:var(--acct)}
+.terms li strong{color:var(--ink)}
+.conf{border:1px solid var(--line);border-radius:10px;padding:20px 18px;margin-top:26px;background:var(--panel)}
+.conf p{margin:0 0 14px;font-size:14.5px;color:var(--dark)}
+.agree{display:flex;gap:12px;align-items:flex-start;background:var(--field);border:1px solid var(--line);border-radius:8px;padding:12px 14px;width:100%;text-align:left;color:var(--ink);margin-bottom:6px;min-height:48px}
+.agree .bx{width:22px;height:22px;border:1.5px solid var(--help);border-radius:5px;flex:none;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .15s}
+.agree .bx svg{width:13px;height:13px;stroke:var(--acc-ink);fill:none;stroke-width:3;display:none}
+.agree[aria-checked=true]{border-color:var(--acct)}
+.agree[aria-checked=true] .bx{background:var(--grad);border-color:var(--acct)}
+.agree[aria-checked=true] .bx svg{display:block}
+.q.bad .agree{border-color:var(--err)}
+.sumbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:22px}
+.errsum{display:none;border:1px solid var(--err);background:var(--acc-tint);border-radius:8px;padding:12px 14px;font-size:14px;margin-top:16px;color:var(--ink)}
+.errsum.on{display:block}
+.errsum ul{margin:6px 0 0;padding-left:18px}
+.errsum a{color:var(--err);font-weight:700}
+.rad{display:grid;gap:8px}
+.rad .chip{justify-content:flex-start;text-align:left}
+.sbox{border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px;background:var(--field)}
+.sbox h3{margin:0 0 12px;font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+.drow{display:grid;grid-template-columns:2fr .6fr 1.6fr 1.4fr 40px;gap:8px;margin-bottom:8px}
+.drow button{border:1px solid var(--line);background:var(--field);border-radius:6px}
+@media(max-width:700px){.drow{grid-template-columns:1fr 1fr;padding-bottom:10px;border-bottom:1px solid var(--line)}.drow input:first-child{grid-column:1/-1}}
+.linkout{display:flex;gap:8px;margin-top:10px}
+.linkout input{font-size:12.5px}
+.mini{font-size:12.5px;color:var(--help)}
+
+/* thank you */
+.thanks{padding:56px 0 60px;display:none}
+.thanks.on{display:block}
+.thanks h2{font-size:clamp(28px,6vw,42px);line-height:1.08;margin:14px 0;text-transform:uppercase}
+.ref{display:inline-block;border:1px dashed var(--help);border-radius:6px;padding:8px 14px;font-weight:700;letter-spacing:.1em;margin:6px 0 24px}
+.next{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:8px 0 28px}
+.next div{border-top:3px solid var(--line);padding-top:10px;font-size:14px;color:var(--body)}
+.next div.a{border-color:var(--acct)}
+.next b{display:block;color:var(--ink);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px}
+@media(max-width:620px){.next{grid-template-columns:1fr}}
+pre.mail{white-space:pre-wrap;word-break:break-word;background:var(--panel);border-radius:8px;padding:14px;font-size:12.5px;line-height:1.5;color:var(--dark);max-height:340px;overflow:auto}
+details.pv{margin-top:18px}
+details.pv summary{cursor:pointer;color:var(--body);font-size:13.5px}
+.foot{border-top:1px solid var(--line);padding:22px 0 40px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--help);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.proto{background:var(--acc-tint);color:var(--ink);font-size:12.5px;text-align:center;padding:7px 12px;margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)))}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}html{scroll-behavior:auto}}
+@media print{.bar,.pvbar,.proto,.sumbar,.hero .btn,#sticky{display:none!important}body{background:#fff;color:#000}section.sec{break-inside:avoid-page}}
+</style>
+
+<div class="proto" id="protoBanner" hidden>Preview prototype. Sending is simulated here and nothing leaves this page. Section details marked as examples are samples.</div>
+<div class="pvbar" id="pvbar" hidden><b>Preview as:</b>
+  <button type="button" data-pm="brief" aria-pressed="true">Client brief</button>
+  <button type="button" data-pm="setup" aria-pressed="false">Designer setup</button>
+  <button type="button" data-pm="confirm" aria-pressed="false">Client confirmation</button></div>
+<header class="bar"><div class="bar-in">
+  <div class="bar-top">
+    <div class="brand"><i></i><span id="brandTxt">Design Project</span></div>
+    <div class="stepnow" aria-live="polite"><span id="stepTxt"></span><span class="saved" id="saved">Saved</span></div>
+  </div>
+  <nav class="segs" id="segs" aria-label="Progress"></nav>
+</div></header>
+
+<main class="wrap" id="main"><div id="app"></div>
+  <footer class="foot"><span>Design Project Details &amp; Confirmation</span><span class="ft" id="footTheme"><button type="button" data-act="theme" data-t="ember">Ember</button><button type="button" data-act="theme" data-t="paper">Paper</button><button type="button" data-act="theme" data-t="neon">Neon</button></span><span id="footBy"></span></footer>
+</main>
+
+<script>
+(function(){
+"use strict";
+/* ================= CONFIG ================= */
+var CFG={endpoint:"https://api.web3forms.com/submit",key:"f1f02b1e-62df-420b-a43c-10995075a3be",proto:false,pub:"https://yousufraza.framer.ai/formbrief",designer:"Yousuf Raza",timeoutMs:15000,tv:"T1-2026-11",
+  minutes:{simple:3,brand:8}};
+var NS="Not sure, please suggest";
+var $=function(s,r){return (r||document).querySelector(s)},$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var h=function(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
+function cap(x){return x.charAt(0).toUpperCase()+x.slice(1)}
+var CK='<svg class="ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>';
+var ERRI='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v6M12 16.5v.01"/></svg>';
+var I={logo:'<circle cx="12" cy="12" r="8"/><path d="M12 7l4 5-4 5-4-5z"/>',
+ident:'<rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><circle cx="17" cy="17" r="4"/>',
+post:'<rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="9.5" r="1.6"/><path d="M5 18l5-4 3 2 3-3 3 3"/>',
+poster:'<rect x="6" y="3" width="12" height="18" rx="1"/><path d="M9 8h6M9 12h6M9 16h3"/>',
+brochure:'<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/>',
+pack:'<path d="M3 8l9-5 9 5v8l-9 5-9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/>',
+card:'<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10h6M7 14h3"/>',
+banner:'<path d="M4 4v17"/><path d="M4 5h16v9H4"/>',
+other:'<circle cx="12" cy="12" r="8"/><path d="M12 8v8M8 12h8"/>',
+q:'<circle cx="12" cy="12" r="8"/><path d="M9.6 9.6a2.5 2.5 0 015 .4c0 1.6-2.6 2-2.6 3.6M12 16.8v.01"/>'};
+var BRANDSET=["Logo","Brand identity (full)","Packaging or label",NS.slice(0,0)+"Not sure yet"];
+var THEMES=[["ember","Ember","Calm black and orange","#0E0E0E","#FF6A1A","#F4F2EC"],["paper","Paper","Soft light, easy on the eyes","#E9E4D8","#F0580F","#2A2824"],["neon","Neon","Black, pink and violet","#0A0912","linear-gradient(135deg,#FF4FA3,#8B5CF6)","#F5F2FF"]];
+var CURTHEME="ember";
+function setTheme(id,persist){if(!THEMES.some(function(t){return t[0]===id}))id="ember";CURTHEME=id;document.documentElement.setAttribute("data-theme",id);
+ $$('[data-act="theme"]').forEach(function(b){var on=b.dataset.t===id;if(b.getAttribute("role")==="radio"){b.setAttribute("aria-checked",String(on));b.tabIndex=on?0:-1}else b.setAttribute("aria-pressed",String(on))});
+ if(persist){try{localStorage.setItem("dp_theme",id)}catch(e){}}}
+function themesHtml(){return '<div class="lab" id="lb-theme" style="margin-bottom:4px">Choose a look</div><p class="hint" style="margin:0 0 10px">Pick the colours you like. You can change it any time.</p><div class="themes" role="radiogroup" aria-labelledby="lb-theme">'+THEMES.map(function(t){var on=t[0]===CURTHEME;return '<button type="button" class="th" role="radio" aria-checked="'+on+'" tabindex="'+(on?0:-1)+'" data-act="theme" data-t="'+t[0]+'"><span class="pv" style="background:'+t[3]+'"><i style="width:44%;background:'+t[4]+'"></i><i style="width:22%;background:'+t[5]+';opacity:.5"></i></span><b>'+t[1]+'</b><small>'+t[2]+'</small></button>'}).join("")+'</div>'}
+var QTYSET=["Social media posts","Poster or flyer","Brochure or menu","Packaging or label","Business card or stationery","Banner or signage"];
+
+/* ================= BRIEF DEFINITION ================= */
+var SECS=[
+{id:"about",n:"01",t:"About you",s:"Who we are working with. Your details are used only for this project.",qs:[
+ {id:"name",type:"text",l:"What is your name?",ph:"Full name",req:1,half:1,ac:"name"},
+ {id:"biz",type:"text",l:"Business or brand name",ph:"If it is different",half:1,ac:"organization",opt:1},
+ {id:"email",type:"text",it:"email",l:"Email",ph:"you@example.com",half:1,ac:"email",opt:1,h:"Add at least one of email or WhatsApp."},
+ {id:"wa",type:"text",it:"tel",l:"WhatsApp or phone",ph:"+92 300 1234567",half:1,ac:"tel",opt:1,h:"Include the country code."},
+ {id:"pref",type:"chips",single:1,l:"Where should we reach you first?",opts:["Email","WhatsApp"],opt:1},
+ {id:"web",type:"text",it:"text",l:"Website or Instagram link",ph:"Paste a link, if you have one",opt:1,h:"This helps us understand your business before we start."},
+ {id:"approver",type:"toggle",l:"Does someone else give the final approval?",opt:1}]},
+{id:"project",n:"02",t:"Your project",s:"What you need and who it is for.",qs:[
+ {id:"biznature",type:"area",l:"What does your business do?",ph:"e.g. A neighbourhood cafe serving specialty coffee and brunch",req:1,rows:2},
+ {id:"what",type:"area",l:"What would you like designed?",ph:"e.g. Three Instagram posts for our new cafe launch",req:1,rows:2,h:"One or two lines is plenty."},
+ {id:"goal",type:"chips",multi:1,l:"What is the main goal?",opts:["New brand or launch","Grow sales or promotion","Refresh an existing design","Look more professional","Event or occasion","Announce something"],other:1,rec:1},
+ {id:"success",type:"chips",multi:1,l:"What would a good result look like?",opts:["More customers or orders","More people knowing us","A more professional look","Positive feedback"],opt:1},
+ {id:"deliv",type:"cards",l:"What do you need?",req:1,h:"Tap everything that applies. Add a quantity where it makes sense.",opts:[["Logo","logo"],["Brand identity (full)","ident"],["Social media posts","post"],["Poster or flyer","poster"],["Brochure or menu","brochure"],["Packaging or label","pack"],["Business card or stationery","card"],["Banner or signage","banner"],["Something else","other"],["Not sure yet","q"]]},
+ {id:"who",type:"chips",multi:1,l:"Who are your customers?",opts:["Everyone","Young adults","Families","Businesses","Students","Premium or niche"],other:1,rec:1},
+ {id:"who2",type:"area",l:"Describe them in your own words",ph:"Age, city, what they care about, how they usually find you",rows:2,opt:1},
+ {id:"know",type:"area",l:"What do you already know about your customers?",ph:"Reviews, feedback, or anything you have noticed",rows:2,opt:1,brand:1,h:"We do the research. This only gives us a head start."},
+ {id:"where",type:"chips",multi:1,l:"Where will it be used?",opts:["Social media","Website","Print","Packaging","Shop or signage"],other:1,rec:1}]},
+{id:"look",n:"03",t:"Look & feel",s:"Not sure of the design terms? Tap what feels closest and we will take it from there.",tag:"Optional",qs:[
+ {id:"mood",type:"chips",multi:1,max:3,l:"Which words fit the design?",opts:["Bold","Minimal","Elegant","Friendly","Technical","Earthy","Energetic","Trustworthy","Fresh","Cosy"],ns:1,rec:1,h:"Pick up to three."},
+ {id:"sliders",type:"sliders",l:"Where does it sit on each scale?",h:"Tap a dot. Leave a scale alone if you are unsure.",rows:[
+  ["serious","Serious","Playful","Formal and composed, or light and fun"],
+  ["classic","Classic","Contemporary","Timeless, or aware of current trends"],
+  ["premium","Approachable","Premium","Friendly and everyday, or refined and high-end"]]},
+ {id:"assets",type:"chips",single:1,l:"Do you already have a logo, brand colours or fonts?",opts:["Yes, I will share them","Logo only","No, we need them made"],ns:1,h:"If yes, add the links in the Files question at the end."},
+ {id:"colour",type:"swatches",max:2,l:"What colour mood feels right?",h:"Pick up to two. This is only a starting point, and we will develop the palette ourselves.",nobrandcolours:1,opts:[
+  ["Warm",["#E8A06A","#C94F3A","#F2D3A5"]],["Cool",["#2F6F8F","#8FC1D4","#DDEBF1"]],["Earthy",["#7A6A4F","#A9A07C","#D8CFB2"]],
+  ["Bold and bright",["#E02B20","#FFC800","#1B1B1B"]],["Soft or pastel",["#F4C6D0","#CFE3D4","#F6EBC9"]],["Black and white",["#111111","#888888","#EEEEEE"]]]},
+ {id:"likes",type:"area",l:"Designs or brands you like",ph:"Links or names, one to three. Say what you like about them if you can.",rows:2,rec:1,h:"The fastest way to show your taste."},
+ {id:"rivals",type:"area",l:"Brands you compete with",ph:"Names or links, if you know any",rows:2,brand:1},
+ {id:"incl",type:"area",l:"Must include",ph:"Text, legal wording, a mascot, key details",half:1,rows:2,none:1},
+ {id:"avoid",type:"area",l:"Must avoid",ph:"Colours, claims, styles, images",half:1,rows:2,none:1}]},
+{id:"time",n:"04",t:"Timing & files",s:"The practical part.",qs:[
+ {id:"when",type:"timing",l:"When would you like it?",req:1,h:"This is your preferred date. We confirm the final delivery date after reviewing the scope."},
+ {id:"content",type:"chips",single:1,l:"What is the status of your text and photos?",opts:["Ready to share","I will send them","I need help with content"],rec:1},
+ {id:"files",type:"links",l:"Files or links",rec:1,h:"Logos, photos, text, references. Set Google Drive or Dropbox links to “Anyone with the link can view”."},
+ {id:"budget",type:"text",it:"text",l:"What is your budget?",ph:"e.g. PKR 50,000 to 80,000",req:1,none:1,noneL:"Not decided yet",h:"It helps us propose something that fits. If you have no figure yet, tap Not decided yet."},
+ {id:"recv",type:"chips",multi:1,l:"How would you like to receive the final files?",opts:["Email","Google Drive link","WeTransfer","WhatsApp","Fiverr"],opt:1},
+ {id:"notes",type:"area",l:"Anything else we should know?",rows:3,opt:1}]}
+];
+var QIDX={};SECS.forEach(function(s){s.qs.forEach(function(q){QIDX[q.id]=q;q.sec=s.id})});
+function find(id){return QIDX[id]}
+
+/* ================= STATE ================= */
+var S={v:{},oth:{},qty:{},sl:{},links:[""],ver:2};
+var storeOK=true,dirty=false,submitted=false,tmr,STEP=-1,softAsked=false;
+function fresh(){return {v:{},oth:{},qty:{},sl:{},links:[""],ver:2}}
+function isBrand(){var d=S.v.deliv||[];return d.some(function(x){return BRANDSET.indexOf(x)>-1})}
+function visible(q){if(q.brand&&!isBrand())return false;if(q.nobrandcolours&&(S.v.assets||[]).indexOf("Yes, I will share them")>-1)return false;return true}
+function val(id){var v=S.v[id];return Array.isArray(v)?v.join(", "):(v==null?"":String(v)).trim()}
+function answered(q){var v=S.v[q.id];
+ if(q.type==="sliders")return Object.keys(S.sl).some(function(k){return S.sl[k]});
+ if(q.type==="timing")return !!((S.v.when_mode||[]).length||S.v.when_date);
+ if(q.type==="links")return S.links.some(function(x){return x.trim()})||!!S.v.files_chat;
+ if(q.type==="toggle")return !!S.v.approver_on;
+ if(q.type==="text"||q.type==="area")return !!(v&&String(v).trim())||!!S.v[q.id+"_none"];
+ return !!(v&&v.length)}
+function validPhone(p){var c=p.replace(/[\s\-().]/g,"");return /^\+?\d{7,15}$/.test(c)}
+function validEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)}
+function contactOK(){var e=val("email"),w=val("wa");return (e&&validEmail(e))||(w&&validPhone(w))}
+function reqList(){return [
+ {id:"name",l:"Your name",ok:function(){return !!val("name")},sec:"about"},
+ {id:"contact",l:"Email or WhatsApp",ok:contactOK,sec:"about"},
+ {id:"biznature",l:"What your business does",ok:function(){return !!val("biznature")},sec:"project"},
+ {id:"what",l:"What you would like designed",ok:function(){return !!val("what")},sec:"project"},
+ {id:"deliv",l:"What you need",ok:function(){return (S.v.deliv||[]).length>0},sec:"project"},
+ {id:"when",l:"When you would like it",ok:function(){return !!((S.v.when_mode||[]).length||S.v.when_date)},sec:"time"},
+ {id:"budget",l:"Your budget",ok:function(){return !!(val("budget")||S.v.budget_none)},sec:"time"}]}
+
+/* ================= RENDER: BRIEF ================= */
+function qHead(q){var tg=(q.type==="text"||q.type==="area");
+ return '<label class="lab" '+(tg?'for="f-'+q.id+'"':'id="lb-'+q.id+'"')+'>'+h(q.l)+(q.req?' <span class="rq" aria-hidden="true">*</span><span class="sr"> required</span>':(q.rec?'<span class="rc">Recommended</span>':''))+'</label>'+(q.h?'<p class="hint" id="h-'+q.id+'">'+h(q.h)+'</p>':'')}
+function chipHtml(q,x,on,cls,grpSingle){return '<button type="button" class="chip '+(cls||"")+'" role="'+(grpSingle?"radio":"checkbox")+'" aria-checked="'+on+'" '+(grpSingle?'tabindex="'+(on?0:-1)+'" ':'')+'data-act="chip" data-q="'+q.id+'" data-v="'+h(x)+'">'+CK+'<span>'+h(x)+'</span></button>'}
+function body(q){var v=S.v[q.id],o="";
+ if(q.type==="text")return '<input id="f-'+q.id+'" type="'+(q.it||"text")+'" data-act="in" data-q="'+q.id+'" placeholder="'+h(q.ph||"")+'" value="'+h(v||"")+'" autocomplete="'+(q.ac||"off")+'"'+(q.it==="tel"?' inputmode="tel"':'')+(q.it==="email"?' inputmode="email"':'')+'>'+(q.none?'<div class="chips" style="margin-top:8px">'+chipHtml({id:q.id+"_none"},q.noneL||"Nothing specific",!!S.v[q.id+"_none"],"soft",false)+'</div>':'');
+ if(q.type==="area")return '<textarea id="f-'+q.id+'" rows="'+(q.rows||3)+'" data-act="in" data-q="'+q.id+'" placeholder="'+h(q.ph||"")+'">'+h(v||"")+'</textarea>'+(q.none?'<div class="chips" style="margin-top:8px">'+chipHtml({id:q.id+"_none"},"Nothing specific",!!S.v[q.id+"_none"],"soft",false)+'</div>':'');
+ if(q.type==="chips"){v=v||[];var sg=!!q.single;o='<div class="chips" role="'+(sg?"radiogroup":"group")+'" aria-labelledby="lb-'+q.id+'" data-grp="'+q.id+'">';
+   q.opts.forEach(function(x,i){o+=chipHtml(q,x,v.indexOf(x)>-1,"",sg)});
+   if(q.other)o+=chipHtml(q,"Other",v.indexOf("Other")>-1,"",sg);
+   if(q.ns)o+=chipHtml(q,NS,v.indexOf(NS)>-1,"soft",sg);
+   o+='</div>';
+   if(q.other&&v.indexOf("Other")>-1)o+='<div class="other"><input type="text" aria-label="Other, please describe" data-act="oth" data-q="'+q.id+'" placeholder="Please describe" value="'+h(S.oth[q.id]||"")+'"></div>';
+   return o+'<div class="note" id="n-'+q.id+'" role="status"></div>'}
+ if(q.type==="cards"){v=v||[];o='<div class="cards" role="group" aria-labelledby="lb-'+q.id+'">';
+   q.opts.forEach(function(x){var on=v.indexOf(x[0])>-1,k=S.qty[x[0]]||1,hasq=QTYSET.indexOf(x[0])>-1;
+    o+='<div class="card" data-on="'+on+'"><button type="button" class="cb" role="checkbox" aria-checked="'+on+'" data-act="card" data-q="'+q.id+'" data-v="'+h(x[0])+'"><svg viewBox="0 0 24 24" aria-hidden="true">'+I[x[1]]+'</svg><span>'+h(x[0])+'</span></button><span class="tick" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span>'+
+    (hasq?'<div class="qty"><button type="button" aria-label="Fewer: '+h(x[0])+'" data-act="qm" data-v="'+h(x[0])+'">&minus;</button><b aria-live="polite">'+k+'</b><button type="button" aria-label="More: '+h(x[0])+'" data-act="qp" data-v="'+h(x[0])+'">+</button></div>':'')+'</div>'});
+   o+='</div><div class="chosen" id="chosen" aria-live="polite"'+(v.length?'':' hidden')+'>'+h(chosenText())+'</div>';
+   if(v.indexOf("Something else")>-1)o+='<div class="other"><input type="text" aria-label="Something else: what do you need?" data-act="oth" data-q="'+q.id+'" placeholder="What else do you need?" value="'+h(S.oth[q.id]||"")+'"></div>';
+   return o}
+ if(q.type==="sliders"){q.rows.forEach(function(r){var cur=S.sl[r[0]]||0;
+   o+='<div class="sl" role="radiogroup" aria-label="'+h(r[1]+" to "+r[2])+'" data-sg="'+r[0]+'"><span class="l'+(cur&&cur<3?" on":"")+'">'+h(r[1])+'</span><div class="dots">';
+   for(var i=1;i<=5;i++)o+='<button type="button" class="dot'+(cur===i?" on":"")+'" role="radio" aria-checked="'+(cur===i)+'" tabindex="'+((cur?cur===i:i===3)?0:-1)+'" aria-label="'+i+' of 5, '+(i===1?h(r[1]):i===5?h(r[2]):'in between')+'" data-act="dot" data-s="'+r[0]+'" data-v="'+i+'"><i></i></button>';
+   o+='</div><span class="r'+(cur>3?" on":"")+'">'+h(r[2])+'</span><div class="h"><span>'+h(r[3].split(", or ")[0])+'</span>'+(cur?'<button type="button" class="sk" data-act="skip" data-s="'+r[0]+'">Clear</button>':'<span></span>')+'<span>'+h(cap(r[3].split(", or ")[1]||""))+'</span></div></div>'});return o}
+ if(q.type==="swatches"){v=v||[];o='<div class="sw" role="group" aria-labelledby="lb-'+q.id+'">';
+   q.opts.forEach(function(x){var on=v.indexOf(x[0])>-1;
+    o+='<button type="button" class="swb" role="checkbox" aria-checked="'+on+'" data-act="sw" data-q="'+q.id+'" data-v="'+h(x[0])+'"><div class="st">'+x[1].map(function(c){return '<span style="background:'+c+'"></span>'}).join("")+'</div><div class="tx"><span>'+h(x[0])+'</span>'+(on?'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.6" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>':'')+'</div></button>'});
+   return o+'</div><div class="note" id="n-'+q.id+'" role="status"></div>'}
+ if(q.type==="timing"){var m=S.v.when_mode||[];
+   o='<div class="timing"><div class="dt"><label class="hint" for="f-when_date" style="margin:0 0 4px;display:block">Date</label><input id="f-when_date" type="date" min="'+isoToday()+'" data-act="in" data-q="when_date" value="'+h(S.v.when_date||"")+'"></div><div class="chips" role="radiogroup" aria-labelledby="lb-when" data-grp="when_mode">';
+   ["Fixed date","As soon as possible","Flexible"].forEach(function(x){o+=chipHtml({id:"when_mode"},x,m.indexOf(x)>-1,"",true)});return o+'</div></div>'}
+ if(q.type==="links"){o='<div class="links" id="linkrows">';S.links.forEach(function(x,i){o+='<div class="row"><input type="url" inputmode="url" aria-label="Link '+(i+1)+'" data-act="lnk" data-i="'+i+'" placeholder="https://" value="'+h(x)+'">'+(S.links.length>1?'<button type="button" aria-label="Remove link '+(i+1)+'" data-act="lnkdel" data-i="'+i+'">&times;</button>':'')+'</div>'});
+   o+='</div><div class="chips">'+(S.links.length<5?'<button type="button" class="chip soft" data-act="lnkadd">+ Add another link</button>':'')+chipHtml({id:"files_chat"},"I will send files on Fiverr or WhatsApp",!!S.v.files_chat,"soft",false)+'</div>';return o}
+ if(q.type==="toggle"){var on=!!S.v.approver_on;
+   o='<div class="chips"><button type="button" class="chip" role="switch" aria-checked="'+on+'" data-act="apptog">'+CK+'<span>Yes, someone else approves</span></button></div>';
+   if(on)o+='<div class="togglebox grid2"><div><label class="lab" for="f-approver" style="font-size:14px">Their name</label><input id="f-approver" type="text" data-act="in" data-q="approver" value="'+h(S.v.approver||"")+'" autocomplete="off"></div><div><label class="lab" for="f-approver_c" style="font-size:14px">Their email or WhatsApp</label><input id="f-approver_c" type="text" data-act="in" data-q="approver_c" value="'+h(S.v.approver_c||"")+'" autocomplete="off"></div></div>';
+   return o}
+ return ""}
+function chosenText(){var v=S.v.deliv||[];if(!v.length)return "";return "You chose: "+v.map(function(x){return QTYSET.indexOf(x)>-1&&(S.qty[x]||1)>1?(S.qty[x]+" × "+x):x}).join(", ")}
+function qHtml(q){return '<div class="q" id="q-'+q.id+'" data-qid="'+q.id+'"'+(visible(q)?'':' hidden')+'>'+qHead(q)+'<div class="qb">'+body(q)+'</div><div class="err" id="e-'+q.id+'" role="alert"></div></div>'}
+function isoToday(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
+function today(){var d=new Date();return ("0"+d.getDate()).slice(-2)+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+d.getFullYear()}
+
+function briefHtml(){var out='<div id="briefArea"><section class="hero" id="intro"><div class="eyebrow"><i></i>Design Project</div><h1>Details &amp; Confirmation</h1>'+
+ '<p class="warm">Let’s get your project started. Quick projects take about '+CFG.minutes.simple+' minutes and full brand projects about '+CFG.minutes.brand+'. No answer is wrong.</p>'+
+ '<div class="badges"><span class="badge">4 short steps</span><span class="badge">Only 7 questions are required</span><span class="badge">Saves as you go</span></div>'+
+ '<div id="welcome"></div>'+themesHtml()+'<button class="btn" type="button" id="startBtn">Start <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>'+
+ (CFG.designer?'<div class="by">Prepared by <b>'+h(CFG.designer)+'</b></div>':'')+'</section><div id="storewarn"></div>';
+ SECS.forEach(function(s){var inner="",qs=s.qs;for(var k=0;k<qs.length;){var a=qs[k],b=qs[k+1];
+   if(a.half&&b&&b.half){inner+='<div class="grid2">'+qHtml(a)+qHtml(b)+'</div>';k+=2}else{inner+=qHtml(a);k++}}
+  var nav=s.id==="time"?'':'<div class="nav"><button class="btn ghost" type="button" data-act="back">Back</button><span class="stepok" data-ok="'+s.id+'" aria-live="polite"></span><button class="btn" type="button" data-act="next">Next step</button></div>';
+  out+='<section class="sec" id="s-'+s.id+'" data-sec="'+s.id+'" aria-labelledby="h-'+s.id+'" hidden><div class="sh"><span class="n" aria-hidden="true">'+s.n+'</span><h2 id="h-'+s.id+'" tabindex="-1">'+h(s.t)+'</h2>'+(s.tag?'<span class="tag">'+s.tag+'</span>':'')+'</div><p class="sub">'+h(s.s)+'</p>'+inner+nav+'</section>'});
+ out+='<section class="sec" id="s-submit" hidden><div class="errsum" id="errsum" role="alert" tabindex="-1"></div>'+
+ '<p class="hint" style="margin:0 0 12px">By sending this, you share these answers with your designer. They are used only for this project. You can ask to have them deleted at any time.</p>'+
+ '<div class="sumbar"><button class="btn ghost" type="button" data-act="back">Back</button><button class="btn" type="button" id="submitBtn" data-act="submit"><span class="sp" aria-hidden="true"></span><span class="bt">Send my brief</span></button><span class="hint" style="margin:0" id="subNote" role="status"></span></div></section></div>'+
+ '<section class="thanks" id="thanks" aria-live="polite" tabindex="-1"><svg class="bigtick" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M7 12.5l3.5 3.5L17 8.5"/></svg><div class="eyebrow"><i></i>Brief received</div><h2>Thank you. Your brief is with us.</h2>'+
+ '<p class="warm">We will review it and send you a proposal with the scope, timeline and price. Keep this reference if you need to message us about it. If you send an update later, it replaces this one under the same reference.</p><div class="ref" id="refNo"></div>'+
+ '<div class="next"><div class="a"><b>1 &middot; Brief review</b>We read your answers and may ask a few follow-ups.</div><div><b>2 &middot; Proposal</b>You receive the details and terms to confirm.</div><div><b>3 &middot; Work begins</b>Once content and any advance are in place.</div></div>'+
+ '<div class="sumbar"><button class="btn ghost" type="button" id="copyBtn">Copy my answers</button><button class="btn ghost" type="button" id="editBtn">Edit and send an update</button></div>'+
+ '<details class="pv" id="pv"><summary>Preview: what your designer receives</summary><pre class="mail" id="mailPv"></pre></details></section>';
+ return out}
+
+/* ================= PROGRESS ================= */
+function secProg(s){
+ var reqs=reqList().filter(function(r){return r.sec===s.id});
+ if(s.id==="look"||!reqs.length){var any=s.qs.some(function(q){return visible(q)&&answered(q)});return {f:any?1:0,done:any,optional:true}}
+ var ok=reqs.filter(function(r){return r.ok()}).length;return {f:ok/reqs.length,done:ok===reqs.length,optional:false}}
+function remainingMin(){var rem=reqList().filter(function(r){return !r.ok()}).length;var t=rem*30;if(rem===0)return 0;return Math.max(1,Math.round(t/60))}
+function paint(){if(MODE!=="brief")return;var segs=$$(".seg");SECS.forEach(function(s,i){var st=secProg(s);if(!segs[i])return;segs[i].style.setProperty("--f",Math.round(st.f*100)+"%");segs[i].classList.toggle("done",st.done);var ok=$('[data-ok="'+s.id+'"]');if(ok&&ok.dataset.k!==(st.done?"1":"0")){ok.dataset.k=st.done?"1":"0";ok.innerHTML=st.done?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>'+(st.optional?"Added":"Required answers done"):""}});setCur()}
+function showStep(n,keep){STEP=n;var it=$("#intro");if(it)it.hidden=(n!==-1);SECS.forEach(function(s,i){var e=$("#s-"+s.id);if(e)e.hidden=(n!==i)});var sb=$("#s-submit");if(sb)sb.hidden=(n!==3);[it,n>=0?$("#s-"+SECS[n].id):null,n===3?sb:null].forEach(function(e){if(e&&!e.hidden){e.classList.remove("enter");void e.offsetWidth;e.classList.add("enter")}});paint();if(!keep){window.scrollTo({top:0,behavior:"instant"});var hd=n>=0?$("#h-"+SECS[n].id):null;if(hd)hd.focus({preventScroll:true})}}
+function recMissing(){var o=[];SECS.forEach(function(s){s.qs.forEach(function(q){if(q.rec&&visible(q)&&!answered(q))o.push(q)})});return o}
+function setCur(){if(MODE!=="brief")return;var ci=STEP;
+ var segs=$$(".seg");segs.forEach(function(e,i){e.classList.toggle("cur",i===ci)});
+ var m=remainingMin(),left=m===0?"Ready to send":"About "+m+" min left";
+ $("#stepTxt").innerHTML=(ci<0?'Ready when you are':'Step <b>'+(ci+1)+'</b> of 4<span class="nm"> &middot; '+h(SECS[ci].t)+'</span>')+' &middot; '+left}
+
+/* ================= STORAGE ================= */
+function writeNow(quiet){clearTimeout(tmr);if(!dirty||submitted)return;dirty=false;try{localStorage.setItem("dp_brief_v2",JSON.stringify(S));if(!quiet){var s=$("#saved");if(s){s.classList.add("on");setTimeout(function(){s.classList.remove("on")},1400)}}}catch(e){storeOK=false;warnStore()}}
+function save(){dirty=true;clearTimeout(tmr);tmr=setTimeout(writeNow,350)}
+function warnStore(){var w=$("#storewarn");if(w&&!storeOK)w.innerHTML='<div class="warn">Your browser is not letting this page save your answers. If you leave, they will be lost.</div>'}
+function load(){try{localStorage.setItem("dp_probe","1");localStorage.removeItem("dp_probe")}catch(e){storeOK=false;return false}
+ try{var r=localStorage.getItem("dp_brief_v2");if(r){var o=JSON.parse(r);if(o&&o.v&&typeof o.v==="object"&&o.ver===2&&Object.keys(o.v).length){S=o;S.oth=S.oth||{};S.qty=S.qty||{};S.sl=S.sl||{};if(!Array.isArray(S.links)||!S.links.length)S.links=[""];return true}}}catch(e){try{localStorage.removeItem("dp_brief_v2")}catch(x){}}return false}
+window.addEventListener("pagehide",function(){writeNow(true)});document.addEventListener("visibilitychange",function(){if(document.hidden)writeNow(true)});
+window.addEventListener("storage",function(ev){if(ev.key==="dp_brief_v2"&&MODE==="brief"&&!$("#tabwarn")){var w=$("#storewarn");if(w)w.insertAdjacentHTML("beforeend",'<div class="warn" id="tabwarn">This form was changed in another tab. Reload this page to see the latest answers.</div>')}});
+
+/* ================= EVENTS (brief) ================= */
+function rerender(id){var q=find(id),e=$("#q-"+id);if(!e)return;e.querySelector(".qb").innerHTML=body(q)}
+function applyConditions(){SECS.forEach(function(s){s.qs.forEach(function(q){var e=$("#q-"+q.id);if(e)e.hidden=!visible(q)})})}
+function flash(id,msg){var n=$("#n-"+id);if(n){n.textContent=msg;setTimeout(function(){if(n.textContent===msg)n.textContent=""},2400)}}
+function clearBad(id){var e=$("#q-"+id);if(e){e.classList.remove("bad");var er=$("#e-"+id);if(er)er.textContent="";$$("[aria-invalid]",e).forEach(function(c){c.removeAttribute("aria-invalid");c.removeAttribute("aria-describedby")})}}
+function setBad(id,msg){var e=$("#q-"+id),er=$("#e-"+id);if(!e)return;e.classList.add("bad");if(er)er.innerHTML=ERRI+'<span>'+h(msg)+'</span>';
+ var c=e.querySelector("input,textarea,[data-grp],[role=group],[role=radiogroup]");if(c){c.setAttribute("aria-invalid","true");c.setAttribute("aria-describedby","e-"+id)}}
+function focusQ(id){var qq=find(id);if(MODE==="brief"&&qq){var ix=SECS.map(function(s){return s.id}).indexOf(qq.sec);if(ix>-1&&ix!==STEP)showStep(ix,true)}var e=$("#q-"+id);if(!e)return;e.scrollIntoView({behavior:"smooth",block:"center"});var c=e.querySelector("input:not([type=hidden]),textarea,[role=radio][tabindex='0'],[role=checkbox],button");if(c)setTimeout(function(){c.focus({preventScroll:true})},250)}
+function touchSingle(id,val){var cur=(S.v[id]||[]).slice();S.v[id]=cur.indexOf(val)>-1?[]:[val]}
+
+function onClickBrief(t,ev){var a=t.dataset.act,id=t.dataset.q,val=t.dataset.v;
+ if(a==="chip"){
+   if(id.slice(-5)==="_none"){var base=id.slice(0,-5);S.v[id]=!S.v[id];if(S.v[id]){S.v[base]="";var ta=$("#f-"+base);if(ta)ta.value=""}t.setAttribute("aria-checked",!!S.v[id]);clearBad(base);save();paint();return}
+   if(id==="files_chat"){S.v.files_chat=!S.v.files_chat;t.setAttribute("aria-checked",!!S.v.files_chat);save();paint();return}
+   var q=find(id)||{id:id,single:1},cur=(S.v[id]||[]).slice(),i=cur.indexOf(val);
+   if(id==="when_mode"){
+     if(i>-1){cur=[];S.v.when_date=""}else{cur=[val];if(val!=="Fixed date")S.v.when_date=""}
+     S.v.when_mode=cur;rerender("when");clearBad("when");if(val==="Fixed date"&&i===-1){var d=$("#f-when_date");if(d)d.focus()}save();paint();return}
+   if(q.single){cur=i>-1?[]:[val]}
+   else if(i>-1)cur.splice(i,1);
+   else if(val===NS)cur=[NS];
+   else{cur=cur.filter(function(x){return x!==NS});if(q.max&&cur.length>=q.max){flash(id,"You can pick up to "+q.max+". Tap one to remove it first.");return}cur.push(val)}
+   S.v[id]=cur;clearBad(id);rerender(id);if(id==="assets"){applyConditions()}save();paint()}
+ else if(a==="card"){var c=(S.v[id]||[]).slice(),j=c.indexOf(val);
+   if(j>-1)c.splice(j,1);else{if(val==="Not sure yet")c=[];else c=c.filter(function(x){return x!=="Not sure yet"});c.push(val)}
+   S.v[id]=c;clearBad(id);rerender(id);applyConditions();save();paint()}
+ else if(a==="qp"||a==="qm"){var k=S.qty[val]||1;k=Math.max(1,Math.min(99,k+(a==="qp"?1:-1)));S.qty[val]=k;t.parentNode.querySelector("b").textContent=k;var ch=$("#chosen");if(ch)ch.textContent=chosenText();save()}
+ else if(a==="dot"){var sid=t.dataset.s,n=+val;S.sl[sid]=S.sl[sid]===n?0:n;rerender("sliders");var f=$('[data-s="'+sid+'"][data-v="'+(S.sl[sid]||3)+'"]');if(f)f.focus();save();paint()}
+ else if(a==="skip"){S.sl[t.dataset.s]=0;rerender("sliders");save();paint()}
+ else if(a==="sw"){var s2=(S.v[id]||[]).slice(),m=s2.indexOf(val),q2=find(id);if(m>-1)s2.splice(m,1);else{if(s2.length>=q2.max){flash(id,"Pick up to "+q2.max+". Tap one to remove it first.");return}s2.push(val)}S.v[id]=s2;rerender(id);save();paint()}
+ else if(a==="apptog"){S.v.approver_on=!S.v.approver_on;rerender("approver");var ap=$("#f-approver");if(ap&&S.v.approver_on)ap.focus();save();paint()}
+ else if(a==="lnkadd"){if(S.links.length<5){S.links.push("");rerender("files");var rows=$$("#linkrows input");if(rows.length)rows[rows.length-1].focus()}save()}
+ else if(a==="lnkdel"){S.links.splice(+t.dataset.i,1);if(!S.links.length)S.links=[""];rerender("files");save();paint()}
+ else if(a==="goto"){showStep(SECS.map(function(s){return s.id}).indexOf(t.dataset.sec))}else if(a==="back"){showStep(STEP<=0?-1:STEP-1)}else if(a==="next"){showStep(Math.min(3,STEP+1))}else if(a==="sendany"){softAsked=true;submitBrief()}
+ else if(a==="submit")submitBrief()}
+function onInputBrief(t){var a=t.dataset.act,id=t.dataset.q;
+ if(a==="in"){S.v[id]=t.value;clearBad(id);
+   if(id==="email"||id==="wa"){clearBad("email");clearBad("wa")}
+   if(find(id)&&find(id).none){if(S.v[id+"_none"]&&t.value.trim()){S.v[id+"_none"]=false;var nb=$('[data-q="'+id+'_none"]');if(nb)nb.setAttribute("aria-checked","false")}}
+   if(id==="when_date"){if(t.value){S.v.when_mode=["Fixed date"]}else if((S.v.when_mode||[]).indexOf("Fixed date")>-1){S.v.when_mode=[]}
+     $$('[data-grp="when_mode"] .chip').forEach(function(c){var on=(S.v.when_mode||[]).indexOf(c.dataset.v)>-1;c.setAttribute("aria-checked",on);c.tabIndex=on?0:-1});clearBad("when")}
+   save();paint()}
+ else if(a==="oth"){S.oth[id]=t.value;save()}
+ else if(a==="lnk"){S.links[+t.dataset.i]=t.value;save();paint()}}
+/* arrow-key behaviour for radio groups and sliders */
+document.addEventListener("keydown",function(ev){var t=ev.target;if(!t||!t.getAttribute||t.getAttribute("role")!=="radio")return;
+ var k=ev.key;if(["ArrowRight","ArrowDown","ArrowLeft","ArrowUp"].indexOf(k)<0)return;
+ var grp=t.closest('[role=radiogroup]');if(!grp)return;ev.preventDefault();
+ var items=$$('[role=radio]',grp),i=items.indexOf(t),n=(k==="ArrowRight"||k==="ArrowDown")?(i+1)%items.length:(i-1+items.length)%items.length;
+ items[n].focus();items[n].click();var again=grp.querySelectorAll('[role=radio]')[n];if(again)again.focus()});
+document.addEventListener("focusin",function(ev){var t=ev.target;if(t&&(t.tagName==="INPUT"||t.tagName==="TEXTAREA")&&window.innerWidth<700){setTimeout(function(){try{t.scrollIntoView({block:"center",behavior:"smooth"})}catch(e){}},300)}});
+
+/* ================= COMPOSE (brief) ================= */
+function mkRef(){var d=new Date(),s=("0"+(d.getFullYear()%100)).slice(-2)+("0"+(d.getMonth()+1)).slice(-2)+("0"+d.getDate()).slice(-2),r="",c="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";for(var i=0;i<3;i++)r+=c[Math.floor(Math.random()*c.length)];return "DP-"+s+"-"+r}
+function vis(id){return visible(find(id))}
+function linkBase(){return (CFG.pub&&!CFG.proto)?CFG.pub:location.href.split("#")[0]}
+function setupLink(ref){var dl=(S.v.deliv||[]).join(", "),bu=S.v.budget_none?"Not decided yet":val("budget"),wn=[val("when_mode"),S.v.when_date].filter(Boolean).join(" - ");
+ var o={r:ref,n:val("name"),b:val("biz"),w:val("what"),d:dl,u:bu,t:wn,e:val("email"),p:val("wa")};
+ return linkBase()+"#setup="+b64e(JSON.stringify(o))}
+function compose(ref){var L=[],P=function(k,v){if(v)L.push(k+": "+v)},H=function(t){L.push("","== "+t+" ==")};
+ var dl=(S.v.deliv||[]).map(function(x){var o=x==="Something else"&&S.oth.deliv?" ("+S.oth.deliv+")":"";return x+o+(QTYSET.indexOf(x)>-1?" x"+(S.qty[x]||1):"")}).join("; ");
+ var gl=val("goal");if(S.oth.goal&&(S.v.goal||[]).indexOf("Other")>-1)gl+=" ("+S.oth.goal+")";
+ var wh=val("where");if(S.oth.where&&(S.v.where||[]).indexOf("Other")>-1)wh+=" ("+S.oth.where+")";
+ var wo=val("who");if(S.oth.who&&(S.v.who||[]).indexOf("Other")>-1)wo+=" ("+S.oth.who+")";
+ L.push(curVer>1?"DESIGN PROJECT - BRIEF (UPDATED, version "+curVer+", replaces the earlier one)":"DESIGN PROJECT - BRIEF","Reference: "+ref,"Submitted: "+new Date().toISOString(),"Project type: "+(isBrand()?"BRAND (full question set shown)":"SIMPLE"));
+ L.push("","DESIGNER ONLY - open this link to prepare the proposal (setup opens with this client's details filled in):",setupLink(ref));
+ H("ABOUT YOU");P("Name",val("name"));P("Business / brand",val("biz"));P("Email",val("email"));P("WhatsApp / phone",val("wa"));P("Reach first on",val("pref"));P("Website / Instagram",val("web"));
+ if(S.v.approver_on)P("Final approval by",[val("approver"),val("approver_c")].filter(Boolean).join(" - "));
+ H("YOUR PROJECT");P("Business",val("biznature"));P("What to design",val("what"));P("Main goal",gl);P("Good result",val("success"));P("Deliverables",dl);P("Customers",wo);P("About them",val("who2"));if(vis("know"))P("Already known about customers",val("know"));P("Where it will be used",wh);
+ H("LOOK & FEEL");P("Mood",val("mood"));
+ var sl=[];[["serious","Serious","Playful"],["classic","Classic","Contemporary"],["premium","Approachable","Premium"]].forEach(function(r){if(S.sl[r[0]])sl.push(r[1]+" <-> "+r[2]+": "+S.sl[r[0]]+"/5")});
+ if(sl.length){L.push("Scales (1 = left, 5 = right):");sl.forEach(function(x){L.push("  "+x)})}
+ P("Existing logo / colours / fonts",val("assets"));if(vis("colour"))P("Colour mood",val("colour"));P("Likes",val("likes"));if(vis("rivals"))P("Competitors",val("rivals"));
+ P("Must include",S.v.incl_none?"Nothing specific":val("incl"));P("Must avoid",S.v.avoid_none?"Nothing specific":val("avoid"));
+ H("TIMING & FILES");P("Preferred date",[val("when_mode"),S.v.when_date].filter(Boolean).join(" - ")+" (request only; final date to be confirmed by designer)");P("Text & photos",val("content"));
+ var lk=S.links.map(function(x){return x.trim()}).filter(Boolean);if(lk.length)L.push("Links:"),lk.forEach(function(x){L.push("  "+x)});if(S.v.files_chat)L.push("Files: client will send on Fiverr/WhatsApp");
+ P("Budget",S.v.budget_none?"Not decided yet":val("budget"));P("Receive final files by",val("recv"));P("Anything else",val("notes"));
+ var out=[];for(var i=0;i<L.length;i++){if(L[i].indexOf("== ")===0){var nx=L[i+1];if(nx===undefined||nx===""||nx.indexOf("== ")===0){if(out.length&&out[out.length-1]==="")out.pop();continue}}out.push(L[i])}
+ return out.join("\n")}
+
+/* ================= SEND ================= */
+var sending=false;
+function send(subject,message,name,email){
+ return new Promise(function(resolve,reject){
+  if(PVW){setTimeout(resolve,500);return}
+  if(!CFG.key){if(CFG.proto){setTimeout(resolve,700);return}reject(new Error("not_configured"));return}
+  var ctl=("AbortController" in window)?new AbortController():null,to=setTimeout(function(){if(ctl)ctl.abort();reject(new Error("timeout"))},CFG.timeoutMs);
+  fetch(CFG.endpoint,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},signal:ctl?ctl.signal:undefined,
+   body:JSON.stringify({access_key:CFG.key,subject:subject,from_name:"Design Project",name:name||"Client",email:email||undefined,message:message,botcheck:""})})
+  .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j}})})
+  .then(function(x){clearTimeout(to);if(x.ok&&x.j&&x.j.success===true)resolve();else reject(new Error("rejected"))})
+  .catch(function(e){clearTimeout(to);reject(e)})})}
+function sendError(box,msg,txt){box.innerHTML=msg+'<div class="sumbar"><button class="btn ghost" type="button" id="copy2">Copy my answers</button></div>';box.classList.add("on");var c=$("#copy2");if(c)c.onclick=function(){copy(lastCopy||txt,c)}}
+function friendlyErr(e){return e&&e.message==="not_configured"?"This form is not connected to its inbox yet, so nothing was sent. Please contact your designer.":"We could not send this just now. Your answers are safe on this page. Check your connection and try again, or copy your answers and send them to your designer directly."}
+
+/* ================= SUBMIT (brief) ================= */
+function validateBrief(){var bad=[];
+ if(!val("name"))bad.push(["name","Please add your name.","Your name"]);
+ var em=val("email"),wa=val("wa");
+ if(!em&&!wa)bad.push(["email","Add an email or a WhatsApp number so we can reach you.","Email or WhatsApp"]);
+ else{if(em&&!validEmail(em))bad.push(["email","That email looks incomplete. Check for a missing @ or dot.","A valid email"]);
+   if(wa&&!validPhone(wa))bad.push(["wa","Please include the country code and use digits only, for example +92 300 1234567.","A valid WhatsApp or phone number"])}
+ if(!val("biznature"))bad.push(["biznature","Tell us briefly what your business does.","What your business does"]);
+ if(!val("what"))bad.push(["what","Tell us briefly what you would like designed.","What you would like designed"]);
+ if(!(S.v.deliv||[]).length)bad.push(["deliv","Tap at least one thing you need, or tap Not sure yet.","What you need"]);
+ if(!((S.v.when_mode||[]).length||S.v.when_date))bad.push(["when","Choose a date, or tap one of the options.","When you would like it"]);
+ if(!val("budget")&&!S.v.budget_none)bad.push(["budget","Please add a budget, or tap Not decided yet.","Your budget"]);
+ return bad}
+function submitBrief(){if(sending)return;var bad=validateBrief(),box=$("#errsum");
+ $$(".q.bad").forEach(function(e){clearBad(e.dataset.qid)});
+ if(bad.length){bad.forEach(function(b){setBad(b[0],b[1])});box.classList.remove("soft");box.innerHTML='Please complete these first:<ul>'+bad.map(function(b){return '<li><a href="#q-'+b[0]+'" data-jump="'+b[0]+'">'+h(b[2])+'</a></li>'}).join("")+'</ul>';box.classList.add("on");box.focus();focusQ(bad[0][0]);return}
+ box.classList.remove("on","soft");
+ if(!softAsked){var miss=recMissing();if(miss.length){softAsked=true;box.innerHTML='A few quick answers help us most. Add them now, or send as it is:<ul>'+miss.map(function(q){return '<li><a href="#q-'+q.id+'" data-jump="'+q.id+'">'+h(q.l)+'</a></li>'}).join("")+'</ul><div class="sumbar" style="margin-top:12px"><button class="btn" type="button" data-act="sendany">Send anyway</button></div>';box.classList.add("on","soft");box.focus();return}}
+ var ref=sentRef||mkRef();curVer=sentVer+1;var msg=compose(ref),btn=$("#submitBtn");lastMsg=msg;lastCopy=summaryBrief(ref);sending=true;btn.disabled=true;$("#subNote").textContent="Sending...";
+ send((curVer>1?"UPDATED Design Brief (v"+curVer+") - ":"New Design Brief - ")+(val("biz")||val("name"))+" - "+ref,msg,val("name"),validEmail(val("email"))?val("email"):"")
+ .then(function(){sending=false;sentRef=ref;sentVer=curVer;doneBrief(ref,msg)},function(e){sending=false;btn.disabled=false;$("#subNote").textContent="";sendError(box,friendlyErr(e),msg);box.focus()})}
+var lastCopy="",lastMsg="",sentRef="",sentVer=0,curVer=1;
+function doneBrief(ref,msg){$("#briefArea").hidden=true;$("#refNo").textContent=ref;$("#mailPv").textContent=msg;$("#pv").hidden=!CFG.proto;$("#thanks").classList.add("on");$("#segs").style.opacity=.45;submitted=true;
+ try{localStorage.removeItem("dp_brief_v2");sessionStorage.setItem("dp_sent",ref)}catch(e){}window.scrollTo({top:0});$("#thanks").focus({preventScroll:true})}
+function copy(txt,btn){var o=btn.getAttribute("data-label")||btn.textContent;btn.setAttribute("data-label",o);
+ var ok=function(){btn.textContent="Copied";setTimeout(function(){btn.textContent=o},1600)};
+ function fb(){var host=btn.parentNode,ta=host.querySelector("textarea.cpfb");if(!ta){ta=document.createElement("textarea");ta.className="cpfb";ta.readOnly=true;ta.rows=9;ta.style.cssText="width:100%;margin-top:10px";ta.setAttribute("aria-label","Summary to copy");host.appendChild(ta)}ta.value=txt;ta.focus();ta.select();btn.textContent="Select all, then copy"}
+ try{navigator.clipboard.writeText(txt).then(ok,fb)}catch(e){fb()}}
+/* ---- clean summaries for the client's own copy (the designer's email is separate and unchanged) ---- */
+function dstr(){var m=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],d=new Date();return d.getDate()+" "+m[d.getMonth()]+" "+d.getFullYear()}
+function scaleWord(a,b,n){if(!n)return "";return n===3?"Balanced between "+a+" and "+b:(n===1||n===5?"Strongly ":"Leaning ")+(n<3?a:b)}
+function sent(x){x=String(x||"").trim();return x?x.replace(/[.!?\s]+$/,"")+".":""}
+function lst(arr){arr=arr.filter(Boolean);return arr.length<2?(arr[0]||""):arr.slice(0,-1).join(", ")+" and "+arr[arr.length-1]}
+function para(){return Array.prototype.slice.call(arguments).filter(Boolean).join(" ")}
+function summaryBrief(ref){var nm=val("name"),biz=val("biz");
+ function withOther(id){var v=(S.v[id]||[]).slice(),o=S.oth[id];return v.map(function(x){return x==="Other"&&o?o:x}).filter(function(x){return x!==NS})}
+ var dl=(S.v.deliv||[]).filter(function(x){return x!=="Not sure yet"}).map(function(x){var o=x==="Something else"&&S.oth.deliv?" ("+S.oth.deliv+")":"";var q=QTYSET.indexOf(x)>-1&&(S.qty[x]||1)>1?S.qty[x]+" ":"";return q+x.charAt(0).toLowerCase()+x.slice(1)+o});
+ var sl=[];[["serious","serious","playful"],["classic","classic","contemporary"],["premium","approachable","premium"]].forEach(function(r){var n=S.sl[r[0]];if(n&&n!==3)sl.push((n===1||n===5?"strongly ":"leaning ")+(n<3?r[1]:r[2]))});
+ var when=(S.v.when_mode||[])[0],ws=S.v.when_date?"by "+S.v.when_date:when==="As soon as possible"?"as soon as possible":when==="Flexible"?"with flexible timing":"";
+ var lk=S.links.map(function(x){return x.trim()}).filter(Boolean);
+ var p1=para("Hello, my name is "+(nm||"-")+(biz?" and I am writing about "+biz:"")+".",val("biznature")?"A little about the business: "+sent(val("biznature")):"");
+ var p2=para(val("what")?"I would like the following designed: "+sent(val("what")):"",dl.length?"Specifically, I need "+lst(dl)+".":"",withOther("goal").length?"The main goal is "+lst(withOther("goal")).toLowerCase()+".":"",val("success")?"A good result would be "+lst((S.v.success||[]).filter(function(x){return x!==NS})).toLowerCase()+".":"",(withOther("who").length||val("who2"))?"The customers are "+[lst(withOther("who")).toLowerCase(),val("who2")].filter(Boolean).join(", ")+".":"",withOther("where").length?"It will be used on "+lst(withOther("where")).toLowerCase()+".":"");
+ var col=(S.v.colour||[]).length&&visible(find("colour"))?"For colour, I lean towards "+lst((S.v.colour||[]).map(function(x){return x.toLowerCase()}))+".":"";
+ var p3=para((S.v.mood||[]).filter(function(x){return x!==NS}).length?"I would like the design to feel "+lst((S.v.mood||[]).filter(function(x){return x!==NS}).map(function(x){return x.toLowerCase()}))+(sl.length?", "+lst(sl):"")+".":(sl.length?"In style, I lean "+lst(sl)+".":""),col,val("likes")?"Some references I like: "+sent(val("likes")):"",(!S.v.incl_none&&val("incl"))?"Please include: "+sent(val("incl")):"",(!S.v.avoid_none&&val("avoid"))?"Please avoid: "+sent(val("avoid")):"");
+ var p4=para(ws?"I would like this "+ws+".":"",S.v.budget_none?"I have not decided on a budget yet.":(val("budget")?"My budget is "+sent(val("budget")):""),val("content")?"On content: "+val("content").toLowerCase()+".":"",lk.length?"Files and links: "+lk.join(", ")+".":"",S.v.files_chat?"I will send my files on Fiverr or WhatsApp.":"",val("recv")?"Please send the final files by "+lst((S.v.recv||[]).filter(function(x){return x!==NS}).map(function(x){return x.replace(/^Google Drive link$/,"Google Drive link")}))+".":"",val("notes")?sent(val("notes")):"");
+ var ct=[val("email"),val("wa")].filter(Boolean).join(" or "),p5=para("You can reach me at "+ct+(val("pref")?" (I prefer "+val("pref")+")":"")+".","Thank you. This is my brief, reference "+ref+".");
+ return "Subject: Design brief - "+(biz||nm||"New project")+" ("+ref+")\n\n"+[p1,p2,p3,p4,p5].filter(Boolean).join("\n\n")}
+function summaryConfirm(d,cs){var rows=cleanRows(d).map(function(r){return r[0]+(r[1]?" (x"+r[1]+")":"")+([r[2],r[3]].filter(Boolean).length?" - "+[r[2],r[3]].filter(Boolean).join(", "):"")}),fee=[d.cur,d.fee].filter(Boolean).join(" "),titles=[];
+ termsGroups(d).forEach(function(g){g[1].forEach(function(t){if(t.t!=="Portfolio")titles.push(t.t.toLowerCase().replace(/^your /,""))})});
+ var nm=(cs.signame||"").trim();
+ var p1=para("Hello, I am "+nm+" and I confirm that I have read and accepted the project details and terms for "+(d.project||"this project")+(d.ref?" (reference "+d.ref+")":"")+".");
+ var p2=para(d.scope?"The agreed scope is: "+sent(d.scope):"",rows.length?"The deliverables are "+lst(rows)+".":"",d.rev?"The project includes "+d.rev+".":"",d.deliv?"Delivery is planned for "+d.deliv+".":"",fee?"The total fee is "+fee+".":"",d.pay?"Payment: "+sent(d.pay):"",d.payn?sent(d.payn):"");
+ var p3=para("The terms I accepted cover "+lst(titles)+" (version "+(d.tv||CFG.tv)+").",d.conf?"This project is confidential.":(cs.port?"On the portfolio question, my answer is: "+sent(cs.port.charAt(0).toLowerCase()+cs.port.slice(1)):""),"Confirmed on "+dstr()+".");
+ return "Subject: Project confirmation - "+(d.project||d.client||"project")+(d.ref?" ("+d.ref+")":"")+"\n\n"+[p1,p2,p3].filter(Boolean).join("\n\n")}
+
+/* ================= SETUP & CONFIRM DATA ================= */
+var SD=null;/* setup data */
+function emptySetup(){return {v:1,ref:"",client:"",project:"",designer:CFG.designer,scope:"",rows:[["","","",""]],rev:"2 rounds",deliv:"",fee:"",cur:"PKR",pay:"50% advance before work starts. 50% before the final files are released.",payn:"Payment details are shared by message once you confirm.",cancel:"standard",cancelx:"",source:"additional",conf:false,law:"",days:"14",tv:CFG.tv}}
+function exSetup(){return {v:1,ref:"DP-261114-7K2",client:"Ayesha Khan",project:"Brand identity refresh for a neighbourhood cafe",designer:CFG.designer,scope:"Logo refresh, a colour palette and a starter set of social media posts.",rows:[["Logo refresh","1","Primary + icon","SVG, PNG, PDF"],["Instagram posts","3","1080 x 1350 px","PNG"],["Business card","1","90 x 50 mm","Print PDF"]],rev:"2 rounds",deliv:"12 December 2026",fee:"85,000",cur:"PKR",pay:"50% advance before work starts. 50% before final files are released.",payn:"Bank transfer. Details are sent by message.",cancel:"standard",cancelx:"",source:"additional",conf:false,law:"",days:"14",tv:CFG.tv}}
+function loadSetup(){try{var r=localStorage.getItem("dp_setup_v1");if(r){var o=JSON.parse(r);if(o&&o.v===1){if(!o.designer)o.designer=CFG.designer;return o}}}catch(e){}return emptySetup()}
+function saveSetup(){try{var j=JSON.stringify(SD);localStorage.setItem("dp_setup_v1",j);if(SD.ref)localStorage.setItem("dp_setup_r_"+SD.ref,j)}catch(e){}}
+var BI=null;/* client brief info for the designer only, never put in the client link */
+function parseBI(){var hs=location.hash||"";if(hs.indexOf("#setup=")!==0)return null;try{var o=JSON.parse(b64d(hs.slice(7)));return o&&o.r?o:null}catch(e){return null}}
+function startSetup(){BI=parseBI();var d=loadSetup();
+ if(BI){var sv=null;try{var r=localStorage.getItem("dp_setup_r_"+BI.r);if(r){var o=JSON.parse(r);if(o&&o.v===1)sv=o}}catch(e){}
+  if(sv){d=sv}else{d=emptySetup();d.ref=BI.r;d.client=BI.n||"";var pj=[BI.b,BI.w].filter(Boolean).join(" - ");d.project=pj.length>110?pj.slice(0,107)+"...":pj;d.deliv=""}}
+ SD=d;if(BI)saveSetup()}
+function briefBox(){if(!BI)return "";var R=function(k,v){return v?'<div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid var(--line,rgba(128,128,128,.25))"><b style="min-width:110px;font-weight:600">'+h(k)+'</b><span style="flex:1;word-break:break-word">'+v+'</span></div>':""};
+ var wa=(BI.p||"").replace(/[^0-9]/g,"");
+ return '<section class="card" style="margin:0 0 22px;padding:18px" aria-label="Client brief details"><div class="eyebrow" style="margin-bottom:8px"><i></i>From the client brief</div>'+
+  R("Reference",h(BI.r))+R("Client",h(BI.n))+R("Business",h(BI.b))+R("Wants",h(BI.w))+R("Needs",h(BI.d))+R("Budget",h(BI.u))+R("When",h(BI.t))+R("Email",BI.e?'<a href="mailto:'+h(BI.e)+'">'+h(BI.e)+'</a>':"")+R("WhatsApp",BI.p?(wa?'<a href="https://wa.me/'+wa+'" target="_blank" rel="noopener">'+h(BI.p)+'</a>':h(BI.p)):"")+
+  '<p class="hint" style="margin:10px 0 0">This box is for you only. It is not part of the link you send to the client. The full brief is in your email under the same reference.</p></section>'}
+function b64e(s){var b=new TextEncoder().encode(s),x="";b.forEach(function(c){x+=String.fromCharCode(c)});return btoa(x).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
+function b64d(s){s=s.replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";var x=atob(s),b=new Uint8Array(x.length);for(var i=0;i<x.length;i++)b[i]=x.charCodeAt(i);return new TextDecoder().decode(b)}
+function encodeSetup(d){return b64e(JSON.stringify(d))}
+function decodeSetup(t){try{var d=JSON.parse(b64d(t));return d&&d.v===1?d:null}catch(e){return null}}
+function cleanRows(d){return (d.rows||[]).filter(function(r){return r.some(function(c){return String(c).trim()})})}
+
+/* ---- terms ---- */
+function termsGroups(d){var n=0,g=[];function T(title,txt){n++;return {n:("0"+n).slice(-2),t:title,x:txt}}
+ var work=[T("Scope","The designer delivers only the work and deliverables listed in the project details above. Requests for new or changed work should be made in writing (email or WhatsApp). The designer will confirm the price and timing, and work on it starts only after you approve."),
+  T("Revisions","The project includes "+(d.rev||"the number of revision rounds stated above")+". One round means one complete, consolidated set of feedback sent in a single message. Minor corrections (text, small colour or alignment changes) fall within a round. A new concept, a new layout, or a change that departs from the approved brief counts as new work and is quoted separately, with your written approval before it starts."),
+  T("Timeline and delays","The delivery date above depends on you providing content, feedback and payment on time. If there is no response for "+(d.days||"14")+" days, the project may be paused and rescheduled when you are back.")];
+ var pay=[T("Payment and final files","Fees are paid as set out in the payment schedule above. Late payment may pause the work. Final files are released once the full payment is received and you have approved the final design in writing (email or WhatsApp)."),
+  T("Cancellation",d.cancel==="custom"&&d.cancelx?d.cancelx:d.cancel==="advance"?"The advance secures your place in the schedule and is non-refundable. If you cancel after work has started, work completed beyond the advance is also payable.":"If you cancel before work has started, the advance is refunded less any costs already incurred. If work has started, you pay for the work completed so far and the advance is applied to that amount. Any part of the advance beyond the completed work is refunded.")];
+ var rights=[T("Ownership","Rights to use the approved final design pass to you once the full payment is received. Drafts, unused concepts and the designer’s pre-existing materials and tools remain the designer’s."),
+  T("Your content and licences","You are responsible for the text, images, logos and fonts you supply and confirm you have the right to use them. Stock images or fonts the designer licenses for you are for this project only unless agreed otherwise."),
+  T("Source files",d.source==="included"?"Editable source files are included, as listed in the deliverables.":d.source==="additional"?"Editable source files are available for an additional fee, quoted on request.":"Editable source files are not included.")];
+ if(d.conf)rights.push(T("Confidentiality","The designer will keep your project details and unreleased work confidential and will not show the work publicly."));
+ else rights.push(T("Portfolio","You decide below whether the designer may show the finished work in their portfolio and on social media."));
+ g.push(["The work",work],["Payment",pay],["Rights",rights]);
+ if(d.law&&d.law.trim())g.push(["If something changes",[T("Resolving issues","Any issue will first be discussed in good faith. If it cannot be resolved this way, it is governed by "+d.law.trim()+".")]]);
+ return g}
+function termsText(d){var o=[];termsGroups(d).forEach(function(g){o.push(g[0].toUpperCase());g[1].forEach(function(t){o.push(t.n+" "+t.t+": "+t.x)})});return o.join("\n")}
+function proposalText(d){var L=["PROJECT DETAILS (as shown to the client)","Reference: "+(d.ref||"-"),"Client: "+(d.client||"-"),"Project: "+(d.project||"-"),"Prepared by: "+(d.designer||"-"),"","Scope of work: "+(d.scope||"-"),"Deliverables:"];
+ cleanRows(d).forEach(function(r){L.push("  - "+r[0]+" | qty "+(r[1]||"-")+" | "+(r[2]||"-")+" | "+(r[3]||"-"))});
+ L.push("Revisions: "+(d.rev||"-"),"Confirmed delivery date: "+(d.deliv||"-"),"Project fee: "+[d.cur,d.fee].filter(Boolean).join(" ")||"-","Payment schedule: "+(d.pay||"-"));if(d.payn)L.push("Payment method: "+d.payn);
+ L.push("","TERMS & CONDITIONS (version "+(d.tv||CFG.tv)+")",termsText(d));return L.join("\n")}
+
+/* ================= RENDER: SETUP ================= */
+function sfield(id,l,o){o=o||{};var v=SD[id]==null?"":SD[id];
+ return '<div class="q" style="margin-bottom:16px"><label class="lab" for="s-'+id+'" style="font-size:14px;margin-bottom:6px">'+h(l)+'</label>'+(o.area?'<textarea id="s-'+id+'" data-sf="'+id+'" rows="'+(o.rows||3)+'" placeholder="'+h(o.ph||"")+'">'+h(v)+'</textarea>':'<input id="s-'+id+'" type="text" data-sf="'+id+'" placeholder="'+h(o.ph||"")+'" value="'+h(v)+'">')+(o.h?'<p class="hint" style="margin:6px 0 0">'+h(o.h)+'</p>':'')+'</div>'}
+function setupHtml(){var rows=SD.rows.map(function(r,i){return '<div class="drow"><input type="text" aria-label="Item '+(i+1)+'" placeholder="Item" data-dr="'+i+'" data-dc="0" value="'+h(r[0])+'"><input type="text" aria-label="Quantity '+(i+1)+'" placeholder="Qty" data-dr="'+i+'" data-dc="1" value="'+h(r[1])+'"><input type="text" aria-label="Size or platform '+(i+1)+'" placeholder="Size or platform" data-dr="'+i+'" data-dc="2" value="'+h(r[2])+'"><input type="text" aria-label="Format '+(i+1)+'" placeholder="Format" data-dr="'+i+'" data-dc="3" value="'+h(r[3])+'"><button type="button" aria-label="Remove row '+(i+1)+'" data-act="drdel" data-i="'+i+'">&times;</button></div>'}).join("");
+ return '<section class="hero" style="padding-bottom:20px"><div class="eyebrow"><i></i>Designer setup</div><h1 style="font-size:clamp(28px,6vw,42px)">Prepare the proposal</h1><p class="warm">For the designer only, please do not share this page. Fill this in after you have reviewed the client’s brief and finished your research. Then create a link and send it to the client. Nothing here is stored on a server.</p>'+
+ (CFG.proto?'<p><button class="btn ghost" type="button" data-act="exload">Load an example</button></p>':'')+'</section>'+briefBox()+
+ '<div class="sbox"><h3>Who and what</h3><div class="grid2">'+sfield("ref","Brief reference","")+sfield("client","Client name","")+'</div>'+sfield("project","Project title",{ph:"e.g. Brand identity refresh for a cafe"})+sfield("designer","Your name or studio","")+sfield("scope","Scope of work",{area:1,rows:3,ph:"What you will design, in plain words. This is what the client confirms."})+'</div>'+
+ '<div class="sbox"><h3>Deliverables</h3><div id="drows">'+rows+'</div><button type="button" class="chip soft" data-act="dradd">+ Add a deliverable</button></div>'+
+ '<div class="sbox"><h3>Revisions, timeline, fee</h3><div class="grid2">'+sfield("rev","Revision rounds included",{ph:"e.g. 2 rounds"})+sfield("deliv","Confirmed delivery date",{ph:"e.g. 12 December 2026"})+'</div><div class="grid2">'+sfield("cur","Currency",{ph:"e.g. PKR"})+sfield("fee","Total project fee",{ph:"e.g. 85,000"})+'</div>'+sfield("pay","Payment schedule",{area:1,rows:2,ph:"e.g. 50% advance before work starts. 50% before final files are released."})+sfield("payn","Payment method",{ph:"e.g. Bank transfer. Details are sent by message.",h:"Do not put account numbers here. The link can be forwarded."})+'</div>'+
+ '<div class="sbox"><h3>Terms options</h3><div class="q" style="margin-bottom:16px"><label class="lab" for="s-cancel" style="font-size:14px;margin-bottom:6px">Cancellation wording</label><select id="s-cancel" data-sf="cancel"><option value="standard"'+(SD.cancel==="standard"?" selected":"")+'>Fair share: refund if work has not started; pay for completed work</option><option value="advance"'+(SD.cancel==="advance"?" selected":"")+'>Advance is non-refundable</option><option value="custom"'+(SD.cancel==="custom"?" selected":"")+'>My own wording</option></select></div>'+(SD.cancel==="custom"?sfield("cancelx","Your cancellation wording",{area:1,rows:3}):"")+
+ '<div class="q" style="margin-bottom:16px"><label class="lab" for="s-source" style="font-size:14px;margin-bottom:6px">Editable source files</label><select id="s-source" data-sf="source"><option value="not"'+(SD.source==="not"?" selected":"")+'>Not included</option><option value="included"'+(SD.source==="included"?" selected":"")+'>Included</option><option value="additional"'+(SD.source==="additional"?" selected":"")+'>Available for an additional fee</option></select></div>'+
+ '<div class="grid2">'+sfield("days","Days of silence before the project pauses",{ph:"14"})+sfield("law","Governing law line (optional)",{ph:"e.g. the laws of Pakistan",h:"Leave empty to skip the clause. Ask your lawyer for the right wording."})+'</div>'+
+ '<div class="chips"><button type="button" class="chip" role="switch" aria-checked="'+(!!SD.conf)+'" data-act="conftog">'+CK+'<span>This project is confidential (hides the portfolio choice)</span></button></div></div>'+
+ '<div class="sbox"><h3>Create the link</h3><p class="hint" style="margin:0 0 12px">The client sees the details and terms on a separate page and confirms there. Check it with Preview as client first. Nothing is sent from the preview, so it is safe to try.</p><div class="sumbar" style="margin-top:0"><button class="btn" type="button" data-act="genlink">Create link</button><button class="btn ghost" type="button" data-act="prevclient">Preview as client</button><button class="btn ghost" type="button" data-act="resetsetup">Clear all</button></div><div id="linkbox" hidden><div class="linkout"><input type="text" id="linkout" readonly aria-label="Confirmation link"><button class="btn ghost" type="button" data-act="copylink">Copy link</button></div><p class="mini" id="linkinfo" style="margin:8px 0 0"></p></div></div>'}
+
+/* ================= RENDER: CONFIRM ================= */
+function confirmHtml(d){var rows=cleanRows(d),nogood=!d.scope||!rows.length||!d.deliv||!d.fee;
+ var tg=termsGroups(d).map(function(g){return '<div class="tg"><h3>'+h(g[0])+'</h3><ol class="terms">'+g[1].map(function(t){return '<li><b class="nn">'+t.n+'</b><span><strong>'+h(t.t)+'.</strong> '+h(t.x)+'</span></li>'}).join("")+'</ol></div>'}).join("");
+ return '<div id="confArea">'+(PVW?'<div class="warn" style="margin-top:16px"><b>Preview only.</b> This is exactly what your client will see, but nothing you press here is sent to anyone. <button class="linkbtn" type="button" data-act="pvback">Back to setup</button></div>':'')+'<section class="hero" style="padding-bottom:24px"><div class="eyebrow"><i></i>Design Project</div><h1>Details &amp; Confirmation</h1><p class="warm">Here is what we have agreed so far. Please read it carefully. You confirm at the bottom, and nothing starts until you do.</p>'+
+ '<div class="by">'+(d.client?'For <b>'+h(d.client)+'</b> &middot; ':'')+(d.designer?'Prepared by <b>'+h(d.designer)+'</b>':'')+(d.ref?' &middot; Reference <b>'+h(d.ref)+'</b>':'')+'</div></section>'+
+ (nogood?'<div class="warn">Some project details are missing, so this link is not ready to confirm. Please ask your designer to resend it.</div>':'')+
+ '<section class="sec" aria-labelledby="h-pd"><div class="sh"><h2 id="h-pd">Your project details</h2></div><div class="pd"><div class="hd"><span>'+h(d.project||"Project")+'</span>'+(CFG.proto&&d===EXD?'<span style="color:var(--acct)">Example details</span>':'')+'</div><dl style="margin:0">'+
+ '<div class="pdr"><dt>Scope of work</dt><dd>'+h(d.scope)+'</dd></div>'+
+ '<div class="pdr"><dt>Deliverables</dt><dd><div class="dlh"><span>Item</span><span>Qty</span><span>Size or platform</span><span>Format</span></div>'+rows.map(function(r){return '<div class="dlr"><span data-l="Item">'+h(r[0])+'</span><span data-l="Qty">'+h(r[1])+'</span><span data-l="Size">'+h(r[2])+'</span><span data-l="Format">'+h(r[3])+'</span></div>'}).join("")+'</dd></div>'+
+ '<div class="pdr"><dt>Revisions</dt><dd>'+h(d.rev)+'</dd></div><div class="pdr"><dt>Delivery date</dt><dd>'+h(d.deliv)+'</dd></div><div class="pdr"><dt>Project fee</dt><dd>'+h([d.cur,d.fee].filter(Boolean).join(" "))+'</dd></div><div class="pdr"><dt>Payment</dt><dd>'+h(d.pay)+(d.payn?'\n'+h(d.payn):'')+'</dd></div></dl></div></section>'+
+ '<section class="sec" aria-labelledby="h-tc"><div class="sh"><h2 id="h-tc">Project terms &amp; conditions</h2></div><p class="sub" style="margin-bottom:0">Short and in plain language. Please read all of it.</p>'+tg+'</section>'+
+ '<section class="sec" aria-labelledby="h-cf"><div class="sh"><h2 id="h-cf">Your confirmation</h2></div>'+
+ (d.conf?'':'<div class="q" id="q-port" data-qid="port"><label class="lab" id="lb-port">May we show this work in our portfolio?</label><p class="hint">Your choice does not change the project. You can change your mind later by writing to us.</p><div class="rad" role="radiogroup" aria-labelledby="lb-port" data-grp="port">'+["Yes, you may show it in your portfolio and on social media","Only after you ask me first","No, please keep this project private"].map(function(x,i){return chipHtml({id:"port"},x,CS.port===x,"",true)}).join("")+'</div><div class="err" id="e-port" role="alert"></div></div>')+
+ '<div class="conf"><p>I have read the project details and terms above and I accept them. This confirms the agreed project details. Final design approval is recorded separately.</p>'+
+ '<div class="q" id="q-agree" data-qid="agree" style="margin:0 0 14px"><button type="button" class="agree" role="checkbox" aria-checked="'+(!!CS.agree)+'" data-act="agree"><span class="bx" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span><span>I have read and accept the project details and terms. <span style="color:var(--acct)" aria-hidden="true">*</span></span></button><div class="err" id="e-agree" role="alert"></div></div>'+
+ '<div class="grid2"><div class="q" id="q-signame" data-qid="signame" style="margin:0"><label class="lab" for="f-signame">Your full name <span class="rq" aria-hidden="true">*</span></label><input id="f-signame" type="text" data-act="cin" data-q="signame" placeholder="Type your full name" value="'+h(CS.signame||"")+'" autocomplete="name"><div class="err" id="e-signame" role="alert"></div></div>'+
+ '<div class="q" style="margin:0"><label class="lab" for="f-sdate">Date</label><input id="f-sdate" type="text" value="'+today()+'" readonly></div></div></div>'+
+ '<div class="errsum" id="errsum" role="alert" tabindex="-1"></div><div class="sumbar"><button class="btn" type="button" id="acceptBtn" data-act="accept"'+(nogood?' disabled':'')+'><span class="sp" aria-hidden="true"></span><span class="bt">Accept and confirm</span></button><button class="btn ghost" type="button" data-act="chgopen">I would like to change something</button><span class="hint" style="margin:0" id="subNote" role="status"></span></div>'+
+ '<div class="togglebox" id="chgbox" hidden><label class="lab" for="f-chg" style="font-size:14px">What would you like to change?</label><div id="chgForm"><textarea id="f-chg" rows="3" data-act="cin" data-q="chg" placeholder="Tell us what you would like adjusted"></textarea><div class="sumbar" style="margin-top:10px"><button class="btn ghost" type="button" id="chgSendBtn" data-act="chgsend"><span class="sp" aria-hidden="true"></span><span class="bt">Send this to the designer</span></button><span class="hint" style="margin:0" id="chgNote" role="status"></span></div></div><div id="chgDone" hidden role="status"><p style="margin:0 0 8px"><b>Sent. Your designer has received your message.</b></p><p class="hint" style="margin:0 0 10px">They will reply to you directly, so there is no need to send it again. Your confirmation is still waiting above, whenever you are ready.</p><pre class="mail" id="chgSent" style="max-height:140px"></pre><button class="linkbtn" type="button" data-act="chgmore">Write another message</button></div></div></section></div>'+
+ '<section class="thanks" id="thanks" aria-live="polite" tabindex="-1"><svg class="bigtick" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M7 12.5l3.5 3.5L17 8.5"/></svg><div class="eyebrow"><i></i>Confirmed</div><h2 id="thT">Thank you. This is confirmed.</h2><p class="warm" id="thP">Your designer has received your confirmation and will contact you about the next steps. Keep a copy for your records.</p><div class="ref" id="refNo2"></div><div class="sumbar"><button class="btn ghost" type="button" id="copyBtn2">Copy a summary</button></div><details class="pv" id="pv"><summary>Preview: what your designer receives</summary><pre class="mail" id="mailPv"></pre></details></section>'}
+
+/* ================= MODES ================= */
+var MODE="brief",PVW=false,PM=null,EXD=exSetup(),CD=null,CS={};
+function hashMode(){var hs=location.hash||"";if(hs==="#setup"||hs.indexOf("#setup=")===0)return "setup";if(hs.indexOf("#c=")===0||hs.indexOf("#p=")===0)return "confirm";return "brief"}
+function currentMode(){return PM||hashMode()}
+function mountBar(){var seg=$("#segs"),bt=$("#brandTxt");
+ if(MODE==="brief"){bt.textContent="Design Project";seg.hidden=false;seg.innerHTML=SECS.map(function(s,i){return '<button type="button" class="seg" data-act="goto" data-sec="'+s.id+'" aria-label="Go to step '+(i+1)+': '+h(s.t)+(s.id==="look"?', optional':'')+'"><div class="t"><b></b></div><div class="l"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg><em>'+s.n+'</em><span class="nm">'+h(s.t)+'</span>'+(s.id==="look"?'<span class="opt">Optional</span>':'')+'</div></button>'}).join("")}
+ else{seg.hidden=true;seg.innerHTML="";bt.textContent=MODE==="setup"?"Design Project · Designer setup":"Design Project · Confirmation";$("#stepTxt").textContent=""}}
+function mount(){MODE=currentMode();PVW=(location.hash||"").indexOf("#p=")===0&&!PM;var app=$("#app");mountBar();$("#footBy").textContent="";
+ $$("#pvbar button").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.pm===MODE))});
+ if(MODE==="brief"){app.innerHTML=briefHtml();var had=load();if(had){app.innerHTML=briefHtml();$("#welcome").innerHTML='<div class="welcome"><span>Welcome back. Your earlier answers are restored.</span><button class="linkbtn" type="button" id="startOver">Start over</button></div>';$("#startOver").addEventListener("click",function(){S=fresh();try{localStorage.removeItem("dp_brief_v2")}catch(e){}mount()})}
+   warnStore();var sent=null;try{sent=sessionStorage.getItem("dp_sent")}catch(e){}if(sent&&!had){$("#storewarn").insertAdjacentHTML("afterbegin",'<div class="warn">You already sent a brief in this session (reference '+h(sent)+'). You can send another if this is a new project.</div>')}
+   $("#startBtn").addEventListener("click",function(){showStep(0);var f=$("#f-name");if(f&&!f.value)f.focus({preventScroll:true})});
+   $("#editBtn").addEventListener("click",function(){submitted=false;$("#thanks").classList.remove("on");$("#briefArea").hidden=false;$("#segs").style.opacity=1;var b=$("#submitBtn");if(b)b.disabled=false;$("#subNote").textContent="";showStep(3)});
+   $("#copyBtn").addEventListener("click",function(){copy(lastCopy,this)});showStep(-1,true)}
+ else if(MODE==="setup"){startSetup();app.innerHTML=setupHtml()}
+ else{var d=null;if(PM==="confirm"){d=(SD&&SD.scope)?SD:EXD}else{var t=(location.hash||"").slice(3);d=decodeSetup(t)}
+   if(!d){app.innerHTML='<section class="hero"><div class="eyebrow"><i></i>Design Project</div><h1>This link is incomplete</h1><p class="warm">We could not read the project details from this link. Please ask your designer to send it again.</p></section>';return}
+   CD=d;CS={};app.innerHTML=confirmHtml(d);$("#footBy").textContent=d.designer?"Prepared by "+d.designer:"";
+   $("#copyBtn2").addEventListener("click",function(){copy(lastCopy,this)});var prev=(CFG.proto||PVW)?null:getAccepted(d);if(prev)showAccepted(d,prev)}
+ window.scrollTo({top:0})}
+window.addEventListener("hashchange",function(){if(!CFG.proto||!PM)mount()});
+$("#pvbar").addEventListener("click",function(ev){var b=ev.target.closest("button[data-pm]");if(!b)return;PM=b.dataset.pm==="brief"?"brief":b.dataset.pm;if(PM==="confirm"&&!SD)SD=loadSetup();mount()});
+
+/* ================= CONFIRM + SETUP ACTIONS ================= */
+function validateConfirm(){var bad=[];if(!CD.conf&&!CS.port)bad.push(["port","Please choose an option for the portfolio.","Portfolio choice"]);
+ if(!CS.agree)bad.push(["agree","Please tick the box to confirm.","Tick to accept the details and terms"]);
+ if(!(CS.signame||"").trim())bad.push(["signame","Please type your full name.","Your full name"]);return bad}
+function acceptNow(){if(sending)return;var bad=validateConfirm(),box=$("#errsum");
+ $$(".q.bad").forEach(function(e){clearBad(e.dataset.qid)});
+ if(bad.length){bad.forEach(function(b){setBad(b[0],b[1])});box.innerHTML='Please complete these first:<ul>'+bad.map(function(b){return '<li><a href="#q-'+b[0]+'" data-jump="'+b[0]+'">'+h(b[2])+'</a></li>'}).join("")+'</ul>';box.classList.add("on");box.focus();focusQ(bad[0][0]);return}
+ box.classList.remove("on");var d=CD,ts=new Date().toISOString();
+ var msg=["PROPOSAL ACCEPTED","Reference: "+(d.ref||"-"),"Accepted by (typed name): "+CS.signame.trim(),"Accepted on: "+today()+" ("+ts+")","Portfolio choice: "+(d.conf?"Confidential project, no portfolio use":CS.port),"Terms version: "+(d.tv||CFG.tv),"Client confirmed: I have read the project details and terms and I accept them.","","----",proposalText(d)].join("\n");
+ lastMsg=msg;lastCopy=summaryConfirm(d,CS);sending=true;var btn=$("#acceptBtn");btn.disabled=true;$("#subNote").textContent="Sending...";
+ send("Proposal accepted - "+(d.client||CS.signame)+" - "+(d.ref||"no ref"),msg,CS.signame.trim(),"").then(function(){sending=false;$("#confArea").hidden=true;$("#refNo2").textContent=d.ref||"";$("#mailPv").textContent=msg;$("#pv").hidden=!CFG.proto;$("#thanks").classList.add("on");if(PVW){$("#thT").textContent="Preview finished";$("#thP").textContent="This was only a preview. Nothing was sent to anyone.";var c2=$("#copyBtn2");if(c2)c2.hidden=true;$("#pv").hidden=true}else{setAccepted(d,{n:CS.signame.trim(),date:today()})}window.scrollTo({top:0});$("#thanks").focus({preventScroll:true})},function(e){sending=false;btn.disabled=false;$("#subNote").textContent="";sendError(box,friendlyErr(e),msg);box.focus()})}
+var chgSending=false,chgLast="",chgCount=0;
+function sendChange(){if(chgSending)return;var ta=$("#f-chg"),n=$("#chgNote"),btn=$("#chgSendBtn"),t=(ta.value||"").trim();
+ if(!t){n.textContent="Please write what you would like to change.";return}
+ if(t===chgLast){n.textContent="This message was already sent. Change the text to send a new one.";return}
+ var d=CD;chgSending=true;btn.disabled=true;n.textContent="Sending...";chgCount++;
+ var msg=["CHANGE REQUESTED (not accepted yet)","Reference: "+(d.ref||"-"),"Message no.: "+chgCount,"From: "+(CS.signame||d.client||"client"),"","Message:",t].join("\n");
+ send("Change requested #"+chgCount+" - "+(d.client||"client")+" - "+(d.ref||"no ref"),msg,CS.signame||d.client||"Client","").then(function(){chgSending=false;chgLast=t;n.textContent="";$("#chgForm").hidden=true;$("#chgDone").hidden=false;$("#chgSent").textContent=t;if(PVW){var bb=$("#chgDone b");if(bb)bb.textContent="Preview only: nothing was actually sent."}},function(e){chgSending=false;chgCount--;btn.disabled=false;n.textContent=friendlyErr(e)})}
+function accKey(d){var x=JSON.stringify(d),h=5381;for(var i=0;i<x.length;i++)h=((h<<5)+h+x.charCodeAt(i))|0;return "dp_acc_"+(h>>>0).toString(36)}
+function getAccepted(d){try{var r=localStorage.getItem(accKey(d));return r?JSON.parse(r):null}catch(e){return null}}
+function setAccepted(d,o){try{localStorage.setItem(accKey(d),JSON.stringify(o))}catch(e){}}
+function showAccepted(d,o){$("#confArea").hidden=true;$("#refNo2").textContent=d.ref||"";$("#thT").textContent="Already confirmed";$("#thP").textContent="This was confirmed by "+(o.n||"you")+" on "+(o.date||"an earlier date")+". Your designer has it, so nothing more is needed. If you need a change, please write to them directly.";var c=$("#copyBtn2");if(c)c.hidden=true;$("#pv").hidden=true;$("#thanks").classList.add("on")}
+function genLink(){var d=SD,miss=[];["scope","deliv","fee"].forEach(function(k){if(!String(d[k]).trim())miss.push(k)});if(!cleanRows(d).length)miss.push("deliverables");
+ var box=$("#linkbox"),out=$("#linkout"),info=$("#linkinfo");box.hidden=false;
+ if(miss.length){out.value="";info.textContent="Fill these first: "+miss.join(", ")+".";return}
+ var base=linkBase(),url=base+"#c="+encodeSetup(d);out.value=url;
+ info.textContent="Link length: "+url.length+" characters."+(url.length>6000?" This is long. Shorten the scope or terms text, because some apps cut very long links.":"")+(CFG.proto?" In this preview the link will not open on its own. Use Preview as client.":"")+" Save a copy of this proposal for your records."}
+function onClickOther(t){var a=t.dataset.act;
+ if(MODE==="setup"){
+  if(a==="dradd"){SD.rows.push(["","","",""]);saveSetup();$("#drows").innerHTML=setupHtml.call(null).match(/<div id="drows">([\s\S]*?)<\/div><button type="button" class="chip soft" data-act="dradd">/)[1]}
+  else if(a==="drdel"){SD.rows.splice(+t.dataset.i,1);if(!SD.rows.length)SD.rows=[["","","",""]];saveSetup();$("#app").innerHTML=setupHtml()}
+  else if(a==="conftog"){SD.conf=!SD.conf;t.setAttribute("aria-checked",String(!!SD.conf));saveSetup()}
+  else if(a==="genlink")genLink();
+  else if(a==="prevclient"){PM=CFG.proto?"confirm":null;if(CFG.proto){mount()}else{var d=SD;location.hash="#p="+encodeSetup(d)}}
+  else if(a==="exload"){SD=exSetup();saveSetup();$("#app").innerHTML=setupHtml()}
+  else if(a==="resetsetup"){SD=emptySetup();saveSetup();$("#app").innerHTML=setupHtml()}
+  else if(a==="copylink"){var o=$("#linkout");copyText(o.value,t,o)}}
+ else if(MODE==="confirm"){
+  if(a==="chip"&&t.dataset.q==="port"){CS.port=CS.port===t.dataset.v?"":t.dataset.v;$$('[data-grp="port"] .chip').forEach(function(c){var on=CS.port===c.dataset.v;c.setAttribute("aria-checked",String(on));c.tabIndex=on?0:-1});clearBad("port")}
+  else if(a==="agree"){CS.agree=!CS.agree;t.setAttribute("aria-checked",String(!!CS.agree));clearBad("agree")}
+  else if(a==="accept")acceptNow();
+  else if(a==="chgopen"){var b=$("#chgbox");b.hidden=!b.hidden;if(!b.hidden)$("#f-chg").focus()}
+  else if(a==="chgsend")sendChange();
+  else if(a==="pvback"){location.hash="#setup"}
+  else if(a==="chgmore"){$("#chgDone").hidden=true;$("#chgForm").hidden=false;$("#f-chg").value="";$("#chgSendBtn").disabled=false;$("#f-chg").focus()}}}
+function copyText(txt,btn,inp){var ok=function(){var o=btn.textContent;btn.textContent="Copied";setTimeout(function(){btn.textContent=o},1600)};
+ function fb(){if(inp){inp.focus();inp.select()}btn.textContent="Selected, press copy"}
+ try{navigator.clipboard.writeText(txt).then(ok,fb)}catch(e){fb()}}
+function onInputOther(t){if(MODE==="setup"){if(t.dataset.sf){SD[t.dataset.sf]=t.value;saveSetup();if(t.dataset.sf==="cancel"){$("#app").innerHTML=setupHtml();var s=$("#s-cancel");if(s)s.focus()}}
+  else if(t.dataset.dr!==undefined){SD.rows[+t.dataset.dr][+t.dataset.dc]=t.value;saveSetup()}}
+ else if(MODE==="confirm"&&t.dataset.act==="cin"){if(t.dataset.q==="signame"){CS.signame=t.value;clearBad("signame")}}}
+
+/* ================= GLOBAL EVENT ROUTING ================= */
+document.addEventListener("click",function(ev){
+ var j=ev.target.closest("[data-jump]");if(j){ev.preventDefault();focusQ(j.dataset.jump);return}
+ var t=ev.target.closest("[data-act]");if(!t)return;
+ if(t.dataset.act==="theme"){setTheme(t.dataset.t,true);return}
+ if(MODE==="brief")onClickBrief(t,ev);else onClickOther(t)});
+document.addEventListener("input",function(ev){var t=ev.target;if(!t||!t.dataset)return;
+ if(MODE==="brief"){if(t.dataset.act)onInputBrief(t)}else onInputOther(t)});
+document.addEventListener("change",function(ev){var t=ev.target;if(t&&t.tagName==="SELECT"&&MODE==="setup")onInputOther(t)});
+window.addEventListener("scroll",setCur,{passive:true});window.addEventListener("resize",setCur);
+
+/* ================= INIT ================= */
+(function(){var t=null;try{t=localStorage.getItem("dp_theme")}catch(e){}if(!THEMES.some(function(x){return x[0]===t}))t="ember";setTheme(t,false)})();
+if(CFG.proto){$("#protoBanner").hidden=false;$("#pvbar").hidden=false}
+if(window.__DP_TEST__)window.__DP_TEST__({S:function(){return S},CFG:CFG,setCFG:function(o){for(var k in o)CFG[k]=o[k]}});
+mount();
+})();
+</script>
+</body></html>
